@@ -1,0 +1,6 @@
+{
+  "name": "CloudConnect AI - Voice & Connectors Assistant",
+  "description": "ChatGPT-style multimodal AI assistant with file, book, photo, and video uploads, AI image generation, Veo video creation, voice notes, and cloud connectors.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
