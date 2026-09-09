@@ -57,7 +57,7 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="flex items-center gap-3">
           <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-sky-500/30 transition-colors">
             <Sparkles className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
-            <span className="text-xs font-semibold tracking-wide text-zinc-200">Vast Intelligence</span>
+            <span className="text-xs font-semibold tracking-wide text-zinc-200"></span>
             <span className="text-[10px] font-mono text-zinc-500 pl-1 border-l border-zinc-800">Flash 3.8</span>
           </div>
 

@@ -114,7 +114,7 @@ function MainChatApp() {
           {
             id: `msg_welcome_${Date.now()}`,
             role: 'assistant',
-            content: `Hello **${user ? user.name : 'there'}**! 🌌\n\nWelcome to **Vast Intelligence**, powered by **gemini-3.8-flash** with live web search grounding, deep document synthesis, AI image creation, and native voice understanding.\n\nYour session is authenticated as **${user ? user.role : 'Explorer'}** (${user?.plan || 'Free'} Tier).\n\nFeel free to ask complex questions, search the live web, drop in books and research papers, or tap the **Microphone** to speak naturally.`,
+            content: `Hello **${user ? user.name : 'there'}**! 🌌\n\nWelcome to ****, powered by **gemini-3.8-flash** with live web search grounding, deep document synthesis, AI image creation, and native voice understanding.\n\nYour session is authenticated as **${user ? user.role : 'Explorer'}** (${user?.plan || 'Free'} Tier).\n\nFeel free to ask complex questions, search the live web, drop in books and research papers, or tap the **Microphone** to speak naturally.`,
             timestamp: Date.now(),
           },
         ],

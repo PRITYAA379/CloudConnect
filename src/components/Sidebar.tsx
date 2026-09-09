@@ -70,7 +70,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <Sparkles className="w-4 h-4 fill-current" />
           </div>
           <div>
-            <h1 className="text-sm font-bold text-zinc-100 tracking-tight">Vast Intelligence</h1>
+            <h1 className="text-sm font-bold text-zinc-100 tracking-tight"></h1>
             <span className="text-[10px] text-zinc-400 font-mono flex items-center gap-1">
               <Cpu className="w-3 h-3 text-sky-400" />
               gemini-3.8-flash
@@ -273,7 +273,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="mt-2 pt-2 border-t border-white/[0.06] flex items-center justify-between text-[10px] text-zinc-500">
           <span className="flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-sky-400 animate-pulse"></span>
-            Vast Intelligence Online
+             Online
           </span>
           <span className="font-mono text-zinc-600">Gemini 3.8</span>
         </div>

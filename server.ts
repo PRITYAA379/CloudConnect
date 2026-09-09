@@ -420,7 +420,7 @@ export async function* createVastStreamBuffer<T>(
     const topic = message ? `"${message}"` : "your voice inquiry";
     responseBody = `Hello! I have received ${topic}.
 
-I am ready to explore any concept, code repository, complex manuscript, or research any business across this vast intelligence canvas.
+I am ready to explore any concept, code repository, complex manuscript, or research any business across this  canvas.
 
 Here is what you can do:
 - 📍 **Google Maps Business Research**: Research any business on Earth with verified hours, ratings, and location details.

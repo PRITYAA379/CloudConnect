@@ -98,7 +98,7 @@ export const GUEST_USER: UserProfile = {
   name: 'Guest Explorer',
   email: 'guest@vastintelligence.ai',
   avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=256&q=80',
-  role: 'Vast Intelligence Explorer (Guest)',
+  role: ' Explorer (Guest)',
   company: 'Guest Sandbox',
   plan: 'Free',
   createdAt: new Date().toISOString().split('T')[0],

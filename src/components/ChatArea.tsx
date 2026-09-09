@@ -262,7 +262,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
-              Vast Intelligence
+              
             </h2>
             <p className="text-sm sm:text-base text-zinc-400 mt-4 max-w-xl leading-relaxed font-light">
               Boundless multimodal cognition with verified live web search grounding, document understanding, image creation, and native voice synthesis.
