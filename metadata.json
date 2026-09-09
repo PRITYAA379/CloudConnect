@@ -1,6 +1,6 @@
 {
   "name": "CloudConnect AI - Voice & Connectors Assistant",
-  "description": "ChatGPT-style multimodal AI assistant with file, book, photo, and video uploads, AI image generation, Veo video creation, voice notes, and cloud connectors.",
-  "requestFramePermissions": ["microphone"],
+  "description": "Vast multimodal AI workspace with Google Maps global business research, live web search grounding, deep document synthesis, AI image studio, and native voice understanding.",
+  "requestFramePermissions": ["microphone", "geolocation"],
   "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
 }

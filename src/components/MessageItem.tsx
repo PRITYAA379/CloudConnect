@@ -9,15 +9,15 @@ import {
   Sparkles, 
   RotateCcw,
   Download,
-  Film,
   Maximize2,
-  ZoomIn,
-  Video
+  ZoomIn
 } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
-import { ChatMessage, UploadedAttachment } from '../types';
+import { ChatMessage, UploadedAttachment, GoogleMapsBusiness } from '../types';
 import { VoiceMessageBubble } from './VoiceMessageBubble';
-import { ConnectorLogAccordion } from './ConnectorLogAccordion';
+import { WebGroundingSources } from './WebGroundingSources';
+import { GoogleMapsSources } from './GoogleMapsSources';
+import { GoogleMapsBusinessCard } from './GoogleMapsBusinessCard';
 import { AttachmentList } from './AttachmentList';
 
 interface MessageItemProps {
@@ -25,8 +25,8 @@ interface MessageItemProps {
   onSpeakText: (text: string, audioBase64?: string) => void;
   isCurrentlySpeaking: boolean;
   onStopSpeaking: () => void;
-  onAnimateImage?: (imageUrl: string, prompt: string) => void;
   onPreviewAttachment?: (attachment: UploadedAttachment) => void;
+  onOpenMapModal?: (business: GoogleMapsBusiness) => void;
 }
 
 export const MessageItem: React.FC<MessageItemProps> = ({
@@ -34,8 +34,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   onSpeakText,
   isCurrentlySpeaking,
   onStopSpeaking,
-  onAnimateImage,
   onPreviewAttachment,
+  onOpenMapModal,
 }) => {
   const [copied, setCopied] = useState(false);
   const [codeCopiedIndex, setCodeCopiedIndex] = useState<number | null>(null);
@@ -60,7 +60,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
         isAssistant ? 'bg-zinc-950/40' : 'bg-transparent'
       }`}
     >
-      <div className="max-w-4xl mx-auto flex gap-4 items-start">
+      <div className="max-w-5xl mx-auto flex gap-4 sm:gap-5 items-start">
         {/* Avatar */}
         <div
           className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center font-bold text-xs shadow-md ${
@@ -141,59 +141,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                   >
                     <Download className="w-3.5 h-3.5" />
                   </a>
-
-                  {onAnimateImage && (
-                    <button
-                      onClick={() => onAnimateImage(message.generatedImage!.url, message.generatedImage!.prompt)}
-                      className="flex items-center gap-1 px-2 py-1 rounded-lg bg-purple-950/80 hover:bg-purple-900/80 border border-purple-500/40 text-purple-300 text-[11px] font-semibold transition-colors"
-                      title="Animate this image into a video with Veo"
-                    >
-                      <Film className="w-3 h-3" />
-                      <span>Animate</span>
-                    </button>
-                  )}
                 </div>
-              </div>
-            </div>
-          )}
-
-          {/* Generated Video Card */}
-          {message.generatedVideo && (
-            <div className="my-3 rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900/90 shadow-lg max-w-xl">
-              <div className="relative overflow-hidden bg-black flex items-center justify-center">
-                <video
-                  src={message.generatedVideo.url}
-                  controls
-                  loop
-                  playsInline
-                  className="w-full max-h-[380px] object-contain rounded-t-xl"
-                />
-              </div>
-
-              <div className="p-3 bg-zinc-950/80 border-t border-zinc-800/80 flex items-center justify-between gap-2">
-                <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-medium text-zinc-300 truncate" title={message.generatedVideo.prompt}>
-                    "{message.generatedVideo.prompt}"
-                  </div>
-                  <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-500 mt-0.5">
-                    <span className="text-purple-400 font-semibold flex items-center gap-1">
-                      <Video className="w-3 h-3" />
-                      Veo AI Video
-                    </span>
-                    {message.generatedVideo.resolution && (
-                      <span>• {message.generatedVideo.resolution}</span>
-                    )}
-                  </div>
-                </div>
-
-                <a
-                  href={message.generatedVideo.url}
-                  download={`veo-video-${Date.now()}.mp4`}
-                  className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-purple-400 transition-colors"
-                  title="Download MP4 Video"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                </a>
               </div>
             </div>
           )}
@@ -268,11 +216,30 @@ export const MessageItem: React.FC<MessageItemProps> = ({
             </div>
           )}
 
-          {/* Connector logs and web grounding sources */}
-          {isAssistant && (
-            <ConnectorLogAccordion
-              logs={message.connectorLogs}
-              groundingSources={message.groundingSources}
+          {/* Google Maps Researched Businesses */}
+          {isAssistant && message.mapsBusinesses && message.mapsBusinesses.length > 0 && (
+            <div className="space-y-3 pt-1">
+              {message.mapsBusinesses.map((biz) => (
+                <GoogleMapsBusinessCard
+                  key={biz.id || biz.name}
+                  business={biz}
+                  onOpenMapModal={onOpenMapModal}
+                />
+              ))}
+            </div>
+          )}
+
+          {/* Google Maps Grounding Sources */}
+          {isAssistant && message.mapsGroundingSources && message.mapsGroundingSources.length > 0 && (
+            <GoogleMapsSources
+              sources={message.mapsGroundingSources}
+            />
+          )}
+
+          {/* Live web grounding sources */}
+          {isAssistant && message.groundingSources && message.groundingSources.length > 0 && (
+            <WebGroundingSources
+              sources={message.groundingSources}
             />
           )}
 

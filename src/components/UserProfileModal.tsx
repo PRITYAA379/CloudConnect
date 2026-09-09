@@ -376,7 +376,7 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
           {/* TAB: USAGE & TELEMETRY */}
           {activeTab === 'usage' && (
             <div className="space-y-4">
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
                 <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
                   <div className="text-[10px] text-zinc-500 font-mono uppercase">Messages Sent</div>
                   <div className="text-xl font-bold text-zinc-100 mt-1 font-mono">
@@ -392,9 +392,16 @@ export const UserProfileModal: React.FC<UserProfileModalProps> = ({
                 </div>
 
                 <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
-                  <div className="text-[10px] text-zinc-500 font-mono uppercase">Connectors Fired</div>
-                  <div className="text-xl font-bold text-teal-300 mt-1 font-mono">
-                    {user.stats?.connectorsExecuted || 0}
+                  <div className="text-[10px] text-zinc-500 font-mono uppercase">Web Grounding</div>
+                  <div className="text-xl font-bold text-sky-400 mt-1 font-mono">
+                    {user.stats?.webSearchesPerformed || 0}
+                  </div>
+                </div>
+
+                <div className="p-3 rounded-xl bg-zinc-950 border border-zinc-800">
+                  <div className="text-[10px] text-zinc-500 font-mono uppercase">Maps Researched</div>
+                  <div className="text-xl font-bold text-rose-400 mt-1 font-mono">
+                    {user.stats?.businessesResearched || 0}
                   </div>
                 </div>
 

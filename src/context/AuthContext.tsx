@@ -26,7 +26,7 @@ interface AuthContextType {
   updateProfile: (updated: Partial<UserProfile>) => void;
   updatePreferences: (prefs: Partial<UserPreferences>) => void;
   incrementStat: (
-    statKey: 'messagesSent' | 'voiceNotesRecorded' | 'connectorsExecuted' | 'storageReadMb' | 'filesUploaded',
+    statKey: 'messagesSent' | 'voiceNotesRecorded' | 'webSearchesPerformed' | 'businessesResearched' | 'connectorsExecuted' | 'storageReadMb' | 'filesUploaded',
     amount?: number
   ) => void;
   token: string | null;
@@ -119,12 +119,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         autoVoicePlayback: true,
         streamResponses: true,
         theme: 'dark',
-        favoriteConnectors: ['google-search', 'code-sandbox', 'cloud-storage'],
+        webSearchEnabled: true,
       },
       stats: {
         messagesSent: 0,
         voiceNotesRecorded: 0,
-        connectorsExecuted: 0,
+        webSearchesPerformed: 0,
         storageReadMb: 0,
       },
       connectedAccounts: {
@@ -176,12 +176,12 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         autoVoicePlayback: true,
         streamResponses: true,
         theme: 'dark',
-        favoriteConnectors: ['google-search', 'code-sandbox', 'cloud-storage'],
+        webSearchEnabled: true,
       },
       stats: {
         messagesSent: 0,
         voiceNotesRecorded: 0,
-        connectorsExecuted: 0,
+        webSearchesPerformed: 0,
         storageReadMb: 0,
       },
       connectedAccounts: {
@@ -241,7 +241,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const incrementStat = (
-    statKey: 'messagesSent' | 'voiceNotesRecorded' | 'connectorsExecuted' | 'storageReadMb',
+    statKey: 'messagesSent' | 'voiceNotesRecorded' | 'webSearchesPerformed' | 'businessesResearched' | 'connectorsExecuted' | 'storageReadMb' | 'filesUploaded',
     amount = 1
   ) => {
     if (!user) return;

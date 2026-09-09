@@ -423,7 +423,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
 
               <div className="p-2.5 rounded-xl bg-zinc-950 border border-zinc-800 text-[11px] text-zinc-400 flex items-center gap-2">
                 <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
-                <span>Includes access to Voice intelligence and all Cloud Connectors.</span>
+                <span>Includes access to Multimodal Intelligence, Web Grounding, and Voice.</span>
               </div>
 
               <button

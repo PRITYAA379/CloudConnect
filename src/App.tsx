@@ -2,1351 +2,559 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { Header } from './components/Header';
 import { ChatArea } from './components/ChatArea';
-import { ConnectorsModal } from './components/ConnectorsModal';
 import { AuthModal } from './components/AuthModal';
 import { UserProfileModal } from './components/UserProfileModal';
-import { ALL_CONNECTORS } from './data/connectors';
-
-import {
-  ChatMessage,
-  ChatSession,
-  ConnectorDefinition,
+import { 
+  ChatMessage, 
+  ChatSession, 
   VoiceNoteData,
   UploadedAttachment,
   GeneratedImageData,
-  GeneratedVideoData,
+  GoogleMapsBusiness
 } from './types';
-
 import { speakText } from './utils/audio';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ImageStudioModal } from './components/ImageStudioModal';
-import { VideoStudioModal } from './components/VideoStudioModal';
 import { MediaViewerModal } from './components/MediaViewerModal';
+import { GoogleMapsModal } from './components/GoogleMapsModal';
 
-const STORAGE_KEY_CURRENT_SESSION = 'cloudconnect_active_session_id';
-const STORAGE_KEY_CONNECTORS = 'cloudconnect_active_connectors';
-
-const DEFAULT_CONNECTOR_IDS = [
-  'google-search',
-  'code-sandbox',
-  'cloud-storage',
-  'sql-database',
-  'github-devops',
-  'api-webhooks',
-  'knowledge-rag',
-];
-
-const DEFAULT_MODEL = 'gemini-3.8-flash';
+const STORAGE_KEY_CURRENT_SESSION = 'vast_active_session_id';
+const STORAGE_KEY_WEB_SEARCH = 'vast_web_search_enabled';
+const STORAGE_KEY_MAPS_RESEARCH = 'vast_maps_research_enabled';
 
 function MainChatApp() {
   const { user, incrementStat } = useAuth();
 
   const [sessions, setSessions] = useState<ChatSession[]>([]);
   const [currentSessionId, setCurrentSessionId] = useState<string>('');
+  const [webSearchEnabled, setWebSearchEnabled] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_WEB_SEARCH);
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
 
-  const [connectors, setConnectors] =
-    useState<ConnectorDefinition[]>(ALL_CONNECTORS);
+  const [mapsResearchEnabled, setMapsResearchEnabled] = useState<boolean>(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY_MAPS_RESEARCH);
+      return saved !== null ? JSON.parse(saved) : true;
+    } catch {
+      return true;
+    }
+  });
 
-  const [activeConnectorIds, setActiveConnectorIds] =
-    useState<string[]>(DEFAULT_CONNECTOR_IDS);
+  const [selectedBusinessForMap, setSelectedBusinessForMap] = useState<GoogleMapsBusiness | null>(null);
+  const [userCoords, setUserCoords] = useState<{ latitude: number; longitude: number } | undefined>(undefined);
 
   const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [connectorsModalOpen, setConnectorsModalOpen] = useState(false);
   const [authModalOpen, setAuthModalOpen] = useState(false);
-
-  const [authModalMode, setAuthModalMode] =
-    useState<'signin' | 'signup' | 'switch'>('signin');
-
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup' | 'switch'>('signin');
   const [profileModalOpen, setProfileModalOpen] = useState(false);
-
+  
   const [voiceModeOnly, setVoiceModeOnly] = useState(false);
   const [isGlobalVoiceMuted, setIsGlobalVoiceMuted] = useState(false);
-
   const [isLoading, setIsLoading] = useState(false);
-  const [speakingMessageId, setSpeakingMessageId] =
-    useState<string | null>(null);
+  const [speakingMessageId, setSpeakingMessageId] = useState<string | null>(null);
 
-  // Image / Video Studio
+  // Multimodal Image Studio Modal State
   const [isImageStudioOpen, setIsImageStudioOpen] = useState(false);
-  const [isVideoStudioOpen, setIsVideoStudioOpen] = useState(false);
-
-  const [
-    selectedAttachmentForPreview,
-    setSelectedAttachmentForPreview,
-  ] = useState<UploadedAttachment | null>(null);
-
-  const [videoStudioInitial, setVideoStudioInitial] = useState<{
-    imageUrl?: string;
-    prompt?: string;
-  }>({});
+  const [selectedAttachmentForPreview, setSelectedAttachmentForPreview] = useState<UploadedAttachment | null>(null);
 
   const stopSpeakingRef = useRef<(() => void) | null>(null);
-  const chatAbortControllerRef = useRef<AbortController | null>(null);
 
-  // Per-user session storage
+  // Attempt to acquire geolocation gracefully for Google Maps Platform retrieval
+  useEffect(() => {
+    if (typeof window !== 'undefined' && 'geolocation' in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          setUserCoords({
+            latitude: pos.coords.latitude,
+            longitude: pos.coords.longitude,
+          });
+        },
+        () => {
+          // Graceful fallback if permission is ignored or denied
+        },
+        { timeout: 4000 }
+      );
+    }
+  }, []);
+
+  // Per-user isolated sessions storage key
   const userSessionStorageKey = user
-    ? `cloudconnect_sessions_${user.id}`
-    : 'cloudconnect_sessions_guest';
+    ? `vast_sessions_${user.id}`
+    : 'vast_sessions_guest';
 
-  /*
-   * Create a new chat session.
-   * Kept outside effects so it can safely be reused by UI handlers.
-   */
-  const createNewChatSession = () => {
-    const now = Date.now();
-
-    const newSession: ChatSession = {
-      id: `session_${now}_${Math.random()
-        .toString(36)
-        .substring(2, 8)}`,
-
-      userId: user?.id,
-
-      title: 'New Conversation',
-
-      createdAt: now,
-      updatedAt: now,
-
-      messages: [],
-
-      activeConnectorIds: [...activeConnectorIds],
-
-      voiceModeOnly,
-    };
-
-    setSessions((prev) => [newSession, ...prev]);
-    setCurrentSessionId(newSession.id);
-  };
-
-  /*
-   * Load sessions whenever active user changes.
-   */
+  // Load user sessions whenever the active user changes
   useEffect(() => {
     try {
       const savedSessions = localStorage.getItem(userSessionStorageKey);
+      const savedActiveId = localStorage.getItem(`${STORAGE_KEY_CURRENT_SESSION}_${user?.id || 'guest'}`);
 
-      const savedActiveId = localStorage.getItem(
-        `${STORAGE_KEY_CURRENT_SESSION}_${user?.id || 'guest'}`
-      );
-
-      const savedConnectors = localStorage.getItem(
-        STORAGE_KEY_CONNECTORS
-      );
-
-      /*
-       * Restore connectors safely.
-       */
-      if (savedConnectors) {
-        try {
-          const parsedConnectors = JSON.parse(savedConnectors);
-
-          if (Array.isArray(parsedConnectors)) {
-            setActiveConnectorIds(parsedConnectors);
-          } else {
-            setActiveConnectorIds([...DEFAULT_CONNECTOR_IDS]);
-          }
-        } catch {
-          setActiveConnectorIds([...DEFAULT_CONNECTOR_IDS]);
-        }
-      } else {
-        setActiveConnectorIds([...DEFAULT_CONNECTOR_IDS]);
-      }
-
-      /*
-       * Restore saved sessions safely.
-       */
       if (savedSessions) {
-        try {
-          const parsed: ChatSession[] = JSON.parse(savedSessions);
-
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            setSessions(parsed);
-
-            const active =
-              parsed.find((session) => session.id === savedActiveId) ||
-              parsed[0];
-
-            setCurrentSessionId(active.id);
-
-            return;
-          }
-        } catch (error) {
-          console.error(
-            'Failed to parse saved sessions:',
-            error
-          );
+        const parsed: ChatSession[] = JSON.parse(savedSessions);
+        if (parsed.length > 0) {
+          setSessions(parsed);
+          const active = parsed.find((s) => s.id === savedActiveId) || parsed[0];
+          setCurrentSessionId(active.id);
+          return;
         }
       }
 
-      /*
-       * No saved session.
-       * Create initial welcome conversation.
-       */
-      const now = Date.now();
-
+      // If no sessions exist for this user, create an initial vast welcome conversation
       const initialSession: ChatSession = {
-        id: `session_${now}_${Math.random()
-          .toString(36)
-          .substring(2, 8)}`,
-
+        id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
         userId: user?.id,
-
-        title: `Welcome, ${
-          user ? user.name.split(' ')[0] : 'Guest'
-        }!`,
-
-        createdAt: now,
-        updatedAt: now,
-
+        title: `Welcome, ${user ? user.name.split(' ')[0] : 'Explorer'}!`,
+        createdAt: Date.now(),
+        updatedAt: Date.now(),
         messages: [
           {
-            id: `msg_welcome_${now}`,
-
+            id: `msg_welcome_${Date.now()}`,
             role: 'assistant',
-
-            content: `Hello **${
-              user ? user.name : 'there'
-            }**! 👋
-
-I am **CloudConnect AI**, running on **${DEFAULT_MODEL}** with enterprise cloud plugins and native voice note understanding.
-
-Your session is authenticated as **${
-              user ? user.role : 'Guest'
-            }** (${user?.plan || 'Free'} Tier).
-
-Feel free to tap the **Microphone** to talk, or query your connected cloud storage, SQL databases, and GitHub repositories.`,
-
-            timestamp: now,
+            content: `Hello **${user ? user.name : 'there'}**! 🌌\n\nWelcome to **Vast Intelligence**, powered by **gemini-3.8-flash** with live web search grounding, deep document synthesis, AI image creation, and native voice understanding.\n\nYour session is authenticated as **${user ? user.role : 'Explorer'}** (${user?.plan || 'Free'} Tier).\n\nFeel free to ask complex questions, search the live web, drop in books and research papers, or tap the **Microphone** to speak naturally.`,
+            timestamp: Date.now(),
           },
         ],
-
-        activeConnectorIds: [...DEFAULT_CONNECTOR_IDS],
-
+        webSearchEnabled: true,
         voiceModeOnly,
       };
 
       setSessions([initialSession]);
       setCurrentSessionId(initialSession.id);
-    } catch (error) {
-      console.error(
-        'Failed to initialize CloudConnect session:',
-        error
-      );
-
-      /*
-       * Final fallback if localStorage itself fails.
-       */
-      const now = Date.now();
-
-      const fallbackSession: ChatSession = {
-        id: `session_${now}_${Math.random()
-          .toString(36)
-          .substring(2, 8)}`,
-
-        userId: user?.id,
-
-        title: 'New Conversation',
-
-        createdAt: now,
-        updatedAt: now,
-
-        messages: [],
-
-        activeConnectorIds: [...DEFAULT_CONNECTOR_IDS],
-
-        voiceModeOnly,
-      };
-
-      setSessions([fallbackSession]);
-      setCurrentSessionId(fallbackSession.id);
+    } catch (e) {
+      console.error('Failed to load user sessions:', e);
+      createNewChatSession();
     }
-  }, [user?.id, userSessionStorageKey]);
+  }, [user?.id]);
 
-  /*
-   * Save sessions.
-   */
+  // Save sessions to user-specific localStorage key
   useEffect(() => {
-    if (sessions.length === 0) return;
-
-    try {
-      localStorage.setItem(
-        userSessionStorageKey,
-        JSON.stringify(sessions)
-      );
-    } catch (error) {
-      console.error(
-        'Failed to save sessions:',
-        error
-      );
+    if (sessions.length > 0) {
+      localStorage.setItem(userSessionStorageKey, JSON.stringify(sessions));
     }
   }, [sessions, userSessionStorageKey]);
 
-  /*
-   * Save active session.
-   */
+  // Save current session ID
   useEffect(() => {
-    if (!currentSessionId) return;
-
-    try {
-      localStorage.setItem(
-        `${STORAGE_KEY_CURRENT_SESSION}_${user?.id || 'guest'}`,
-        currentSessionId
-      );
-    } catch (error) {
-      console.error(
-        'Failed to save active session:',
-        error
-      );
+    if (currentSessionId) {
+      localStorage.setItem(`${STORAGE_KEY_CURRENT_SESSION}_${user?.id || 'guest'}`, currentSessionId);
     }
   }, [currentSessionId, user?.id]);
 
-  /*
-   * Save connectors.
-   */
+  // Save web search toggle preference
   useEffect(() => {
-    try {
-      localStorage.setItem(
-        STORAGE_KEY_CONNECTORS,
-        JSON.stringify(activeConnectorIds)
-      );
-    } catch (error) {
-      console.error(
-        'Failed to save connectors:',
-        error
-      );
-    }
-  }, [activeConnectorIds]);
+    localStorage.setItem(STORAGE_KEY_WEB_SEARCH, JSON.stringify(webSearchEnabled));
+  }, [webSearchEnabled]);
 
-  /*
-   * Cleanup active API request on unmount.
-   */
-  useEffect(() => {
-    return () => {
-      if (chatAbortControllerRef.current) {
-        chatAbortControllerRef.current.abort();
-      }
+  const currentSession = sessions.find((s) => s.id === currentSessionId) || {
+    id: 'default',
+    userId: user?.id,
+    title: 'New Chat',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    messages: [],
+    webSearchEnabled,
+  };
 
-      if (stopSpeakingRef.current) {
-        stopSpeakingRef.current();
-        stopSpeakingRef.current = null;
-      }
-    };
-  }, []);
-
-  /*
-   * Current session.
-   */
-  const currentSession =
-    sessions.find(
-      (session) => session.id === currentSessionId
-    ) || {
-      id: 'default',
-
+  const createNewChatSession = () => {
+    const newSession: ChatSession = {
+      id: `session_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
       userId: user?.id,
-
-      title: 'New Chat',
-
+      title: 'New Conversation',
       createdAt: Date.now(),
       updatedAt: Date.now(),
-
       messages: [],
-
-      activeConnectorIds: activeConnectorIds,
-
+      webSearchEnabled,
       voiceModeOnly,
     };
+    setSessions((prev) => [newSession, ...prev]);
+    setCurrentSessionId(newSession.id);
+  };
 
-  /*
-   * Delete session.
-   */
   const handleDeleteSession = (id: string) => {
     setSessions((prev) => {
-      const filtered = prev.filter(
-        (session) => session.id !== id
-      );
-
+      const filtered = prev.filter((s) => s.id !== id);
       if (filtered.length === 0) {
-        const now = Date.now();
-
         const fallback: ChatSession = {
-          id: `session_${now}`,
-
+          id: `session_${Date.now()}`,
           userId: user?.id,
-
           title: 'New Conversation',
-
-          createdAt: now,
-          updatedAt: now,
-
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
           messages: [],
-
-          activeConnectorIds: [...activeConnectorIds],
-
-          voiceModeOnly,
+          webSearchEnabled,
         };
-
         setCurrentSessionId(fallback.id);
-
         return [fallback];
       }
-
       if (currentSessionId === id) {
         setCurrentSessionId(filtered[0].id);
       }
-
       return filtered;
     });
   };
 
-  /*
-   * Clear current chat.
-   */
   const handleClearCurrentChat = () => {
     setSessions((prev) =>
-      prev.map((session) =>
-        session.id === currentSessionId
-          ? {
-              ...session,
-              messages: [],
-              updatedAt: Date.now(),
-            }
-          : session
+      prev.map((s) =>
+        s.id === currentSessionId ? { ...s, messages: [], updatedAt: Date.now() } : s
       )
     );
   };
 
-  /*
-   * Toggle connector.
-   */
-  const handleToggleConnector = (
-    connectorId: string
-  ) => {
-    setActiveConnectorIds((prev) =>
-      prev.includes(connectorId)
-        ? prev.filter((id) => id !== connectorId)
-        : [...prev, connectorId]
-    );
-  };
-
-  /*
-   * Enable all connectors.
-   */
-  const handleEnableAllConnectors = () => {
-    setActiveConnectorIds(
-      ALL_CONNECTORS.map((connector) => connector.id)
-    );
-  };
-
-  /*
-   * Reset recommended connectors.
-   */
-  const handleResetRecommendedConnectors = () => {
-    setActiveConnectorIds([
-      ...DEFAULT_CONNECTOR_IDS,
-    ]);
-  };
-
-  /*
-   * Authentication modal.
-   */
-  const handleOpenAuth = (
-    mode: 'signin' | 'signup' | 'switch' = 'signin'
-  ) => {
+  const handleOpenAuth = (mode: 'signin' | 'signup' | 'switch' = 'signin') => {
     setAuthModalMode(mode);
     setAuthModalOpen(true);
   };
 
-  /*
-   * Send message.
-   */
   const handleSendMessage = async (
-    text: string,
-    voiceNote?: VoiceNoteData,
+    text: string, 
+    voiceNote?: VoiceNoteData, 
     attachments?: UploadedAttachment[]
   ) => {
-    if (
-      !text &&
-      !voiceNote &&
-      (!attachments || attachments.length === 0)
-    ) {
-      return;
-    }
+    if (!text && !voiceNote && (!attachments || attachments.length === 0)) return;
 
+    // Increment user telemetry
     incrementStat('messagesSent', 1);
-
     if (voiceNote) {
       incrementStat('voiceNotesRecorded', 1);
     }
-
     if (attachments && attachments.length > 0) {
-      incrementStat(
-        'filesUploaded',
-        attachments.length
-      );
+      incrementStat('filesUploaded', attachments.length);
     }
 
-    /*
-     * Cancel previous request if one is still active.
-     */
-    if (chatAbortControllerRef.current) {
-      chatAbortControllerRef.current.abort();
-    }
-
-    const abortController =
-      new AbortController();
-
-    chatAbortControllerRef.current =
-      abortController;
-
-    /*
-     * Create user message.
-     */
-    const userMsgId =
-      `msg_${Date.now()}_user`;
-
+    // Create User Message
+    const userMsgId = `msg_${Date.now()}_user`;
     const userMessage: ChatMessage = {
       id: userMsgId,
-
       role: 'user',
-
       content: text,
-
       timestamp: Date.now(),
-
       voiceNote,
-
       attachments,
     };
 
-    /*
-     * First message title.
-     */
-    const isFirstMessage =
-      currentSession.messages.length === 0;
-
+    // Auto title if first message
+    const isFirstMessage = currentSession.messages.length === 0;
     const sessionTitle = isFirstMessage
       ? text
         ? text.slice(0, 32)
-        : attachments &&
-          attachments.length > 0
-        ? `Files: ${attachments[0].name.slice(
-            0,
-            24
-          )}`
+        : attachments && attachments.length > 0
+        ? `Files: ${attachments[0].name.slice(0, 24)}`
         : 'Voice Note Inquiry'
       : currentSession.title;
 
-    /*
-     * Append user message immediately.
-     */
+    // Append user message immediately
     setSessions((prev) =>
-      prev.map((session) =>
-        session.id === currentSessionId
+      prev.map((s) =>
+        s.id === currentSessionId
           ? {
-              ...session,
-
+              ...s,
               title: sessionTitle,
-
               updatedAt: Date.now(),
-
-              messages: [
-                ...session.messages,
-                userMessage,
-              ],
+              messages: [...s.messages, userMessage],
             }
-          : session
+          : s
       )
     );
 
     setIsLoading(true);
 
     try {
-      /*
-       * IMPORTANT FIX:
-       *
-       * The previous code built history from
-       * currentSession.messages only.
-       *
-       * That meant the NEW user message was missing
-       * from the API context.
-       *
-       * We now explicitly append the current message.
-       */
-      const historyPayload = [
-        ...currentSession.messages.map(
-          (message) => ({
-            role: message.role,
+      // Build history for context
+      const historyPayload = currentSession.messages.map((m) => ({
+        role: m.role,
+        content: m.content || m.voiceNote?.transcription || 'Voice Note',
+      }));
 
-            content:
-              message.content ||
-              message.voiceNote?.transcription ||
-              'Voice Note',
-          })
-        ),
-
-        {
-          role: 'user',
-          content:
-            text ||
-            voiceNote?.transcription ||
-            'Voice Note',
-        },
-      ];
-
-      /*
-       * Send request.
-       */
       const res = await fetch('/api/chat', {
         method: 'POST',
-
-        headers: {
-          'Content-Type': 'application/json',
-        },
-
-        signal: abortController.signal,
-
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: text,
-
           voiceNote: voiceNote
             ? {
-                mimeType:
-                  voiceNote.mimeType,
-
-                audioBase64:
-                  voiceNote.audioBase64,
-
-                durationSeconds:
-                  voiceNote.durationSeconds,
+                mimeType: voiceNote.mimeType,
+                audioBase64: voiceNote.audioBase64,
+                durationSeconds: voiceNote.durationSeconds,
               }
             : undefined,
-
-          activeConnectorIds,
-
+          webSearch: webSearchEnabled,
+          mapsResearch: mapsResearchEnabled,
+          userLocation: userCoords,
           history: historyPayload,
-
           voiceModeOnly,
-
-          model: DEFAULT_MODEL,
-
+          model: 'gemini-3.8-flash',
           userRole: user?.role,
-
           userName: user?.name,
-
-          attachments:
-            attachments?.map((attachment) => ({
-              id: attachment.id,
-
-              name: attachment.name,
-
-              size: attachment.size,
-
-              type: attachment.type,
-
-              category: attachment.category,
-
-              base64: attachment.base64,
-
-              textSnippet:
-                attachment.textSnippet,
-            })),
+          attachments: attachments?.map((a) => ({
+            id: a.id,
+            name: a.name,
+            size: a.size,
+            type: a.type,
+            category: a.category,
+            base64: a.base64,
+            textSnippet: a.textSnippet,
+          })),
         }),
       });
 
-      /*
-       * HTTP error.
-       */
       if (!res.ok) {
-        let errMessage =
-          `Server returned ${res.status}: ${res.statusText}`;
-
+        let errMessage = `Server returned ${res.status}: ${res.statusText}`;
         try {
-          const errData =
-            await res.json();
-
-          if (errData?.error) {
-            errMessage = errData.error;
-          }
-        } catch {
-          // Ignore invalid JSON error responses.
-        }
-
+          const errData = await res.json();
+          if (errData?.error) errMessage = errData.error;
+        } catch (_) {}
         throw new Error(errMessage);
       }
 
-      /*
-       * Parse response.
-       */
       const data = await res.json();
 
-      /*
-       * Count connector executions.
-       */
-      if (
-        Array.isArray(data.connectorLogs) &&
-        data.connectorLogs.length > 0
-      ) {
-        incrementStat(
-          'connectorsExecuted',
-          data.connectorLogs.length
-        );
+      // Count web search grounding executions
+      if (data.groundingSources?.length) {
+        incrementStat('webSearchesPerformed', 1);
       }
 
-      /*
-       * Update voice transcript.
-       */
-      if (
-        voiceNote &&
-        data.transcript
-      ) {
+      // Count Google Maps research executions
+      if (data.mapsBusinesses?.length) {
+        incrementStat('businessesResearched', data.mapsBusinesses.length);
+      }
+
+      // Update user message if transcript was extracted from audio
+      if (voiceNote && data.transcript) {
         setSessions((prev) =>
-          prev.map((session) =>
-            session.id === currentSessionId
+          prev.map((s) =>
+            s.id === currentSessionId
               ? {
-                  ...session,
-
-                  title: isFirstMessage
-                    ? data.transcript.slice(
-                        0,
-                        32
-                      )
-                    : session.title,
-
-                  messages:
-                    session.messages.map(
-                      (message) =>
-                        message.id ===
-                        userMsgId
-                          ? {
-                              ...message,
-
-                              voiceNote: {
-                                ...message.voiceNote!,
-
-                                transcription:
-                                  data.transcript,
-                              },
-                            }
-                          : message
-                    ),
+                  ...s,
+                  title: isFirstMessage ? data.transcript.slice(0, 32) : s.title,
+                  messages: s.messages.map((m) =>
+                    m.id === userMsgId
+                      ? {
+                          ...m,
+                          voiceNote: { ...m.voiceNote!, transcription: data.transcript },
+                        }
+                      : m
+                  ),
                 }
-              : session
+              : s
           )
         );
       }
 
-      /*
-       * Create assistant message.
-       */
-      const assistantMsgId =
-        `msg_${Date.now()}_assistant`;
-
+      // Create Assistant Message
+      const assistantMsgId = `msg_${Date.now()}_assistant`;
       const assistantMessage: ChatMessage = {
         id: assistantMsgId,
-
         role: 'assistant',
-
-        content:
-          data.content ||
-          'No response was returned by the AI model.',
-
+        content: data.content,
         timestamp: Date.now(),
-
-        connectorLogs:
-          Array.isArray(data.connectorLogs)
-            ? data.connectorLogs
-            : [],
-
-        groundingSources:
-          Array.isArray(
-            data.groundingSources
-          )
-            ? data.groundingSources
-            : [],
-
-        audioResponseBase64:
-          data.audioResponseBase64,
-
-        modelUsed:
-          data.modelUsed ||
-          DEFAULT_MODEL,
-
-        isQuotaFallback:
-          data.isQuotaFallback,
-
-        generatedImage:
-          data.generatedImage,
-
-        generatedVideo:
-          data.generatedVideo,
+        groundingSources: data.groundingSources || [],
+        mapsGroundingSources: data.mapsGroundingSources || [],
+        mapsBusinesses: data.mapsBusinesses || [],
+        audioResponseBase64: data.audioResponseBase64,
+        modelUsed: data.modelUsed || 'gemini-3.8-flash',
+        isQuotaFallback: data.isQuotaFallback,
+        generatedImage: data.generatedImage,
       };
 
-      /*
-       * Add assistant message.
-       */
       setSessions((prev) =>
-        prev.map((session) =>
-          session.id === currentSessionId
+        prev.map((s) =>
+          s.id === currentSessionId
             ? {
-                ...session,
-
+                ...s,
                 updatedAt: Date.now(),
-
-                messages: [
-                  ...session.messages,
-                  assistantMessage,
-                ],
+                messages: [...s.messages, assistantMessage],
               }
-            : session
+            : s
         )
       );
 
-      /*
-       * Auto voice playback.
-       */
-      const shouldAutoSpeak =
-        !isGlobalVoiceMuted &&
-        (
-          voiceModeOnly ||
-          !!data.audioResponseBase64 ||
-          (
-            !!user?.preferences
-              ?.autoVoicePlayback &&
-            !!voiceNote
-          )
-        );
-
-      if (shouldAutoSpeak) {
-        handleSpeakText(
-          assistantMessage.content,
-          data.audioResponseBase64,
-          assistantMsgId
-        );
+      // Auto voice playback if user has preference enabled and not muted
+      const autoPlayVoice = user?.preferences?.autoVoicePlayback ?? true;
+      if (autoPlayVoice && !isGlobalVoiceMuted && (data.audioResponseBase64 || voiceModeOnly)) {
+        handleSpeakText(data.content, data.audioResponseBase64, assistantMsgId);
       }
-    } catch (err: any) {
-      /*
-       * Abort is expected when another request starts
-       * or the component unmounts.
-       */
-      if (
-        err?.name === 'AbortError'
-      ) {
-        return;
-      }
-
-      console.error(
-        'Chat request error:',
-        err
-      );
-
-      const errorText =
-        err?.message || '';
-
-      const isQuota =
-        errorText.includes('429') ||
-        errorText
-          .toLowerCase()
-          .includes('quota') ||
-        errorText.includes(
-          'RESOURCE_EXHAUSTED'
-        );
-
+    } catch (error: any) {
+      console.error('Chat error:', error);
       const errorMessage: ChatMessage = {
-        id: `msg_${Date.now()}_error`,
-
+        id: `msg_err_${Date.now()}`,
         role: 'assistant',
-
-        content: isQuota
-          ? `> ⚠️ **Gemini API Quota Exceeded (429)**
-
-Your Gemini API key reached its quota or rate limit.
-
-You can retry the prompt after the limit resets, or continue working with local connector data.`
-          : `**Error**
-
-${errorText || 'Unable to connect to CloudConnect AI'}.
-
-Please check your API configuration, server logs, network connection, and retry.`,
-
+        content: `**Notice**: ${error.message || 'An unexpected error occurred. Please try again.'}`,
         timestamp: Date.now(),
+        isQuotaFallback: true,
       };
-
       setSessions((prev) =>
-        prev.map((session) =>
-          session.id === currentSessionId
+        prev.map((s) =>
+          s.id === currentSessionId
             ? {
-                ...session,
-
-                messages: [
-                  ...session.messages,
-                  errorMessage,
-                ],
-
+                ...s,
                 updatedAt: Date.now(),
+                messages: [...s.messages, errorMessage],
               }
-            : session
+            : s
         )
       );
     } finally {
-      /*
-       * Only clear loading state for the active request.
-       */
-      if (
-        chatAbortControllerRef.current ===
-        abortController
-      ) {
-        chatAbortControllerRef.current =
-          null;
-
-        setIsLoading(false);
-      }
+      setIsLoading(false);
     }
   };
 
-  /*
-   * Speak assistant response.
-   */
-  const handleSpeakText = async (
-    text: string,
-    audioBase64?: string,
-    messageId?: string
-  ) => {
-    /*
-     * Stop existing speech.
-     */
+  const handleSpeakText = async (text: string, audioBase64?: string, messageId?: string) => {
     if (stopSpeakingRef.current) {
       stopSpeakingRef.current();
-
       stopSpeakingRef.current = null;
     }
 
-    /*
-     * Toggle current message speech.
-     */
-    if (
-      speakingMessageId === messageId
-    ) {
+    if (speakingMessageId && !messageId) {
       setSpeakingMessageId(null);
       return;
     }
 
-    if (messageId) {
-      setSpeakingMessageId(messageId);
-    }
+    if (messageId) setSpeakingMessageId(messageId);
 
-    try {
-      const stopFn = await speakText(
-        text,
-        audioBase64,
-        () => {
-          setSpeakingMessageId(null);
+    const cancel = await speakText(
+      text,
+      audioBase64,
+      () => {
+        setSpeakingMessageId(null);
+        stopSpeakingRef.current = null;
+      }
+    );
 
-          stopSpeakingRef.current =
-            null;
-        }
-      );
-
-      stopSpeakingRef.current =
-        stopFn;
-    } catch (error) {
-      console.error(
-        'Speech playback error:',
-        error
-      );
-
-      setSpeakingMessageId(null);
-
-      stopSpeakingRef.current =
-        null;
-    }
+    stopSpeakingRef.current = cancel;
   };
 
-  /*
-   * Stop speaking.
-   */
   const handleStopSpeaking = () => {
     if (stopSpeakingRef.current) {
       stopSpeakingRef.current();
-
       stopSpeakingRef.current = null;
     }
-
     setSpeakingMessageId(null);
   };
 
-  /*
-   * Insert generated image.
-   */
-  const handleInsertGeneratedImage = (
-    imageData: GeneratedImageData
-  ) => {
-    const assistantMessage: ChatMessage = {
-      id: `msg_${Date.now()}_img`,
-
+  const handleInsertGeneratedImage = (imageData: GeneratedImageData) => {
+    setIsImageStudioOpen(false);
+    const imageMessage: ChatMessage = {
+      id: `msg_img_${Date.now()}`,
       role: 'assistant',
-
-      content: `🎨 **AI Image Generated**
-
-Prompt: *"${imageData.prompt}"*
-
-Style: \`${
-        imageData.style ||
-        'photorealistic'
-      }\` | Ratio: \`${
-        imageData.aspectRatio
-      }\``,
-
+      content: `**Generated Artwork**: *${imageData.prompt}*\n\nStyle: **${imageData.style || 'Photorealistic'}** • Aspect Ratio: **${imageData.aspectRatio || '1:1'}**`,
       timestamp: Date.now(),
-
       generatedImage: imageData,
     };
-
     setSessions((prev) =>
-      prev.map((session) =>
-        session.id === currentSessionId
+      prev.map((s) =>
+        s.id === currentSessionId
           ? {
-              ...session,
-
-              messages: [
-                ...session.messages,
-                assistantMessage,
-              ],
-
+              ...s,
               updatedAt: Date.now(),
+              messages: [...s.messages, imageMessage],
             }
-          : session
+          : s
       )
     );
-
-    setIsImageStudioOpen(false);
   };
 
-  /*
-   * Insert generated video.
-   */
-  const handleInsertGeneratedVideo = (
-    videoData: GeneratedVideoData
-  ) => {
-    const assistantMessage: ChatMessage = {
-      id: `msg_${Date.now()}_vid`,
-
-      role: 'assistant',
-
-      content: `🎬 **Veo Video Generated**
-
-Prompt: *"${videoData.prompt}"*
-
-Resolution: \`${
-        videoData.resolution
-      }\` | Ratio: \`${
-        videoData.aspectRatio
-      }\``,
-
-      timestamp: Date.now(),
-
-      generatedVideo: videoData,
-    };
-
-    setSessions((prev) =>
-      prev.map((session) =>
-        session.id === currentSessionId
-          ? {
-              ...session,
-
-              messages: [
-                ...session.messages,
-                assistantMessage,
-              ],
-
-              updatedAt: Date.now(),
-            }
-          : session
-      )
-    );
-
-    setIsVideoStudioOpen(false);
-  };
-
-  /*
-   * Animate generated image.
-   */
-  const handleAnimateImage = (
-    imageUrl: string,
-    prompt: string
-  ) => {
-    setVideoStudioInitial({
-      imageUrl,
-
-      prompt: `Animate: ${prompt}`,
-    });
-
-    setIsVideoStudioOpen(true);
-  };
-
-  /*
-   * Attachment preview.
-   */
-  const handlePreviewAttachment = (
-    attachment: UploadedAttachment
-  ) => {
-    setSelectedAttachmentForPreview(
-      attachment
-    );
+  const handlePreviewAttachment = (attachment: UploadedAttachment) => {
+    setSelectedAttachmentForPreview(attachment);
   };
 
   return (
-    <div className="flex h-screen w-screen bg-zinc-950 text-zinc-100 font-sans overflow-hidden">
-      {/* Sidebar */}
+    <div className="flex h-screen bg-[#02050c] text-zinc-100 overflow-hidden font-sans select-none antialiased">
+      {/* Sidebar Navigation */}
       <Sidebar
         isOpen={sidebarOpen}
-        onToggleOpen={() =>
-          setSidebarOpen(!sidebarOpen)
-        }
+        onToggleOpen={() => setSidebarOpen(!sidebarOpen)}
         sessions={sessions}
-        currentSessionId={
-          currentSessionId
-        }
-        onSelectSession={(id) =>
-          setCurrentSessionId(id)
-        }
-        onNewChat={
-          createNewChatSession
-        }
-        onDeleteSession={
-          handleDeleteSession
-        }
-        onOpenConnectors={() =>
-          setConnectorsModalOpen(true)
-        }
-        voiceModeOnly={
-          voiceModeOnly
-        }
-        onToggleVoiceModeOnly={() =>
-          setVoiceModeOnly(
-            !voiceModeOnly
-          )
-        }
-        activeConnectorCount={
-          activeConnectorIds.length
-        }
-        onOpenAuth={
-          handleOpenAuth
-        }
-        onOpenProfile={() =>
-          setProfileModalOpen(true)
-        }
+        currentSessionId={currentSessionId}
+        onSelectSession={(id) => setCurrentSessionId(id)}
+        onNewChat={createNewChatSession}
+        onDeleteSession={handleDeleteSession}
+        voiceModeOnly={voiceModeOnly}
+        onToggleVoiceModeOnly={() => setVoiceModeOnly(!voiceModeOnly)}
+        onOpenAuth={handleOpenAuth}
+        onOpenProfile={() => setProfileModalOpen(true)}
       />
 
-      {/* Main Chat View */}
-      <div className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+      {/* Main Vast Viewport */}
+      <div className="flex-1 flex flex-col min-w-0 h-full relative">
         <Header
           sidebarOpen={sidebarOpen}
-          onToggleSidebar={() =>
-            setSidebarOpen(true)
-          }
-          activeConnectorCount={
-            activeConnectorIds.length
-          }
-          onOpenConnectors={() =>
-            setConnectorsModalOpen(true)
-          }
-          voiceModeOnly={
-            voiceModeOnly
-          }
-          onToggleVoiceModeOnly={() =>
-            setVoiceModeOnly(
-              !voiceModeOnly
-            )
-          }
-          onClearChat={
-            handleClearCurrentChat
-          }
-          isGlobalVoiceMuted={
-            isGlobalVoiceMuted
-          }
+          onToggleSidebar={() => setSidebarOpen(!sidebarOpen)}
+          webSearchEnabled={webSearchEnabled}
+          onToggleWebSearch={() => setWebSearchEnabled(!webSearchEnabled)}
+          voiceModeOnly={voiceModeOnly}
+          onToggleVoiceModeOnly={() => setVoiceModeOnly(!voiceModeOnly)}
+          onClearChat={handleClearCurrentChat}
+          isGlobalVoiceMuted={isGlobalVoiceMuted}
           onToggleVoiceMute={() => {
-            if (
-              !isGlobalVoiceMuted
-            ) {
+            if (!isGlobalVoiceMuted) {
               handleStopSpeaking();
             }
-
-            setIsGlobalVoiceMuted(
-              !isGlobalVoiceMuted
-            );
+            setIsGlobalVoiceMuted(!isGlobalVoiceMuted);
           }}
-          onOpenAuth={
-            handleOpenAuth
-          }
-          onOpenProfile={() =>
-            setProfileModalOpen(true)
-          }
+          onOpenAuth={handleOpenAuth}
+          onOpenProfile={() => setProfileModalOpen(true)}
         />
 
         <ChatArea
-          messages={
-            currentSession.messages
-          }
+          messages={currentSession.messages}
           isLoading={isLoading}
-          onSendMessage={
-            handleSendMessage
-          }
-          onOpenConnectors={() =>
-            setConnectorsModalOpen(true)
-          }
-          activeConnectorIds={
-            activeConnectorIds
-          }
-          allConnectors={
-            connectors
-          }
-          onToggleConnector={
-            handleToggleConnector
-          }
-          voiceModeOnly={
-            voiceModeOnly
-          }
-          onToggleVoiceModeOnly={() =>
-            setVoiceModeOnly(
-              !voiceModeOnly
-            )
-          }
-          onSpeakText={(
-            text,
-            audio
-          ) =>
-            handleSpeakText(
-              text,
-              audio
-            )
-          }
-          isCurrentlySpeaking={
-            !!speakingMessageId
-          }
-          onStopSpeaking={
-            handleStopSpeaking
-          }
-          onOpenImageStudio={() =>
-            setIsImageStudioOpen(
-              true
-            )
-          }
-          onOpenVideoStudio={() => {
-            setVideoStudioInitial(
-              {}
-            );
-
-            setIsVideoStudioOpen(
-              true
-            );
+          onSendMessage={handleSendMessage}
+          webSearchEnabled={webSearchEnabled}
+          onToggleWebSearch={() => setWebSearchEnabled(!webSearchEnabled)}
+          mapsResearchEnabled={mapsResearchEnabled}
+          onToggleMapsResearch={() => {
+            const next = !mapsResearchEnabled;
+            setMapsResearchEnabled(next);
+            localStorage.setItem(STORAGE_KEY_MAPS_RESEARCH, JSON.stringify(next));
           }}
-          onAnimateImage={
-            handleAnimateImage
-          }
-          onPreviewAttachment={
-            handlePreviewAttachment
-          }
+          voiceModeOnly={voiceModeOnly}
+          onToggleVoiceModeOnly={() => setVoiceModeOnly(!voiceModeOnly)}
+          onSpeakText={(text, audio) => handleSpeakText(text, audio)}
+          isCurrentlySpeaking={!!speakingMessageId}
+          onStopSpeaking={handleStopSpeaking}
+          onOpenImageStudio={() => setIsImageStudioOpen(true)}
+          onPreviewAttachment={handlePreviewAttachment}
+          onOpenMapModal={(biz) => setSelectedBusinessForMap(biz)}
         />
       </div>
 
-      {/* Connectors & Plugins Modal */}
-      <ConnectorsModal
-        isOpen={
-          connectorsModalOpen
-        }
-        onClose={() =>
-          setConnectorsModalOpen(
-            false
-          )
-        }
-        connectors={connectors}
-        activeConnectorIds={
-          activeConnectorIds
-        }
-        onToggleConnector={
-          handleToggleConnector
-        }
-        onEnableAll={
-          handleEnableAllConnectors
-        }
-        onResetDefaults={
-          handleResetRecommendedConnectors
-        }
+      {/* Interactive Google Maps Place Modal */}
+      <GoogleMapsModal
+        isOpen={!!selectedBusinessForMap}
+        business={selectedBusinessForMap}
+        onClose={() => setSelectedBusinessForMap(null)}
       />
 
-      {/* Authentication Modal */}
+      {/* Authentication Modal (Sign In, Create Account, Quick Switch) */}
       <AuthModal
         isOpen={authModalOpen}
-        onClose={() =>
-          setAuthModalOpen(false)
-        }
-        initialMode={
-          authModalMode
-        }
+        onClose={() => setAuthModalOpen(false)}
+        initialMode={authModalMode}
       />
 
-      {/* User Profile Modal */}
+      {/* User Profile & Account Settings Modal */}
       <UserProfileModal
-        isOpen={
-          profileModalOpen
-        }
-        onClose={() =>
-          setProfileModalOpen(false)
-        }
-        onOpenSwitchAccount={() =>
-          handleOpenAuth('switch')
-        }
+        isOpen={profileModalOpen}
+        onClose={() => setProfileModalOpen(false)}
+        onOpenSwitchAccount={() => handleOpenAuth('switch')}
       />
 
-      {/* AI Image Studio */}
+      {/* AI Image Studio Modal */}
       <ImageStudioModal
-        isOpen={
-          isImageStudioOpen
-        }
-        onClose={() =>
-          setIsImageStudioOpen(
-            false
-          )
-        }
-        onInsertToChat={
-          handleInsertGeneratedImage
-        }
+        isOpen={isImageStudioOpen}
+        onClose={() => setIsImageStudioOpen(false)}
+        onInsertToChat={handleInsertGeneratedImage}
       />
 
-      {/* Veo Video Studio */}
-      <VideoStudioModal
-        isOpen={
-          isVideoStudioOpen
-        }
-        onClose={() =>
-          setIsVideoStudioOpen(
-            false
-          )
-        }
-        onInsertToChat={
-          handleInsertGeneratedVideo
-        }
-        initialStartingImage={
-          videoStudioInitial.imageUrl
-        }
-        initialPrompt={
-          videoStudioInitial.prompt
-        }
-      />
-
-      {/* Media Viewer */}
+      {/* Media Viewer Lightbox */}
       <MediaViewerModal
-        attachment={
-          selectedAttachmentForPreview
-        }
-        onClose={() =>
-          setSelectedAttachmentForPreview(
-            null
-          )
-        }
-        onAnimateImage={
-          handleAnimateImage
-        }
+        attachment={selectedAttachmentForPreview}
+        onClose={() => setSelectedAttachmentForPreview(null)}
       />
     </div>
   );

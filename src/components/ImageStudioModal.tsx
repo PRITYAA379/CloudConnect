@@ -5,7 +5,6 @@ import {
   Image as ImageIcon, 
   Download, 
   Send, 
-  Film, 
   Sliders, 
   RefreshCw, 
   Upload, 
@@ -19,7 +18,6 @@ interface ImageStudioModalProps {
   isOpen: boolean;
   onClose: () => void;
   onInsertToChat: (imageData: GeneratedImageData) => void;
-  onOpenVideoWithImage?: (imageUrl: string, prompt: string) => void;
   initialPrompt?: string;
   initialImage?: string;
 }
@@ -55,7 +53,6 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
   isOpen,
   onClose,
   onInsertToChat,
-  onOpenVideoWithImage,
   initialPrompt = '',
   initialImage,
 }) => {
@@ -352,7 +349,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                 </div>
 
                 {/* Actions Toolbar */}
-                <div className="w-full grid grid-cols-3 gap-2">
+                <div className="w-full grid grid-cols-2 gap-2">
                   <a
                     href={generatedResult.url}
                     download={`ai-image-${Date.now()}.png`}
@@ -361,20 +358,6 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                     <Download className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Download</span>
                   </a>
-
-                  {onOpenVideoWithImage && (
-                    <button
-                      onClick={() => {
-                        onOpenVideoWithImage(generatedResult.url, generatedResult.prompt);
-                        onClose();
-                      }}
-                      className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-purple-950/60 hover:bg-purple-900/80 border border-purple-500/40 text-purple-300 text-xs font-semibold transition-colors"
-                      title="Create a Veo video animated from this image"
-                    >
-                      <Film className="w-3.5 h-3.5" />
-                      <span>Animate</span>
-                    </button>
-                  )}
 
                   <button
                     onClick={handleInsert}
@@ -392,7 +375,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                 </div>
                 <div className="text-xs font-semibold text-zinc-400">Image Canvas Preview</div>
                 <div className="text-[11px] text-zinc-600 mt-1 max-w-xs">
-                  Your generated artwork will appear here in high-resolution with download and video animation controls.
+                  Your generated artwork will appear here in high-resolution with direct download and chat insertion controls.
                 </div>
               </div>
             )}

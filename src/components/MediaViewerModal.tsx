@@ -14,13 +14,11 @@ import { formatFileSize } from '../utils/fileHelper';
 interface MediaViewerModalProps {
   attachment: UploadedAttachment | null;
   onClose: () => void;
-  onAnimateImage?: (imageUrl: string, prompt: string) => void;
 }
 
 export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
   attachment,
   onClose,
-  onAnimateImage,
 }) => {
   if (!attachment) return null;
 
@@ -42,20 +40,6 @@ export const MediaViewerModal: React.FC<MediaViewerModalProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
-            {attachment.category === 'image' && attachment.dataUrl && onAnimateImage && (
-              <button
-                onClick={() => {
-                  onAnimateImage(attachment.dataUrl!, `Cinematic video animation of ${attachment.name}`);
-                  onClose();
-                }}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-purple-950/60 border border-purple-500/40 text-purple-300 hover:bg-purple-900/60 text-xs transition-colors"
-                title="Generate a video from this image"
-              >
-                <Film className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Animate with Veo</span>
-              </button>
-            )}
-
             {attachment.dataUrl && (
               <a
                 href={attachment.dataUrl}

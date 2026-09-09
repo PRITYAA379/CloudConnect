@@ -68,16 +68,28 @@ export interface GeneratedImageData {
   modelUsed?: string;
 }
 
-export interface GeneratedVideoData {
-  url: string;
-  prompt: string;
-  aspectRatio?: string;
-  resolution?: string;
-  thumbnail?: string;
-  status: 'processing' | 'ready' | 'error';
-  progress?: number;
-  operationName?: string;
-  errorMessage?: string;
+export interface GoogleMapsBusiness {
+  id: string;
+  name: string;
+  category?: string;
+  address?: string;
+  formattedAddress?: string;
+  rating?: number;
+  userRatingCount?: number;
+  priceLevel?: string;
+  isOpenNow?: boolean;
+  openingHours?: string[];
+  phoneNumber?: string;
+  websiteUri?: string;
+  googleMapsUri: string;
+  directionsUri?: string;
+  latitude?: number;
+  longitude?: number;
+  cityCountry?: string;
+  editorialSummary?: string;
+  keyHighlights?: string[];
+  reviewsSnippet?: string;
+  photoUrl?: string;
 }
 
 export interface ChatMessage {
@@ -88,7 +100,6 @@ export interface ChatMessage {
   voiceNote?: VoiceNoteData;
   attachments?: UploadedAttachment[];
   generatedImage?: GeneratedImageData;
-  generatedVideo?: GeneratedVideoData;
   audioResponseUrl?: string;
   audioResponseBase64?: string;
   isVoicePlaying?: boolean;
@@ -97,6 +108,13 @@ export interface ChatMessage {
     title: string;
     url: string;
   }>;
+  mapsGroundingSources?: Array<{
+    title: string;
+    url: string;
+    snippet?: string;
+  }>;
+  mapsBusinesses?: GoogleMapsBusiness[];
+  isMapsResearchActive?: boolean;
   modelUsed?: string;
   isQuotaFallback?: boolean;
 }
@@ -108,7 +126,9 @@ export interface ChatSession {
   createdAt: number;
   updatedAt: number;
   messages: ChatMessage[];
-  activeConnectorIds: string[];
+  webSearchEnabled?: boolean;
+  mapsResearchEnabled?: boolean;
+  activeConnectorIds?: string[];
   systemPrompt?: string;
   voiceModeOnly?: boolean;
 }
@@ -118,13 +138,17 @@ export interface UserPreferences {
   autoVoicePlayback: boolean;
   streamResponses: boolean;
   theme: 'dark' | 'midnight' | 'system';
-  favoriteConnectors: string[];
+  webSearchEnabled?: boolean;
+  mapsResearchEnabled?: boolean;
+  favoriteConnectors?: string[];
 }
 
 export interface UserStats {
   messagesSent: number;
   voiceNotesRecorded: number;
-  connectorsExecuted: number;
+  connectorsExecuted?: number;
+  webSearchesPerformed?: number;
+  businessesResearched?: number;
   storageReadMb: number;
   filesUploaded?: number;
 }
