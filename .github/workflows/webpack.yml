@@ -1,6 +1,32 @@
-git clone https://github.com/PRITYAA379/CloudConnect.git
-cd CloudConnect
-# Edit .github/workflows/webpack.yml with the corrected YAML
-git add .github/workflows/webpack.yml
-git commit -m "fix: Replace Webpack workflow with Vite-based build process"
-git push
+name: NodeJS Build & Test
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Lint TypeScript
+        run: npm run lint
+
+      - name: Build (Vite frontend + esbuild backend)
+        run: npm run build
