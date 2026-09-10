@@ -46,7 +46,7 @@ export const Header: React.FC<HeaderProps> = ({
         {!sidebarOpen && (
           <button
             onClick={onToggleSidebar}
-            className="p-2 rounded-xl text-zinc-400 hover:text-zinc-100 hover:bg-white/5 border border-white/5 transition-all shadow-sm"
+            className="p-2 rounded-xl text-[#A0A0A0] hover:text-[#FFFFFF] hover:bg-white/5 border border-white/5 transition-all shadow-sm"
             title="Open navigation"
             aria-label="Open navigation"
           >
@@ -55,15 +55,15 @@ export const Header: React.FC<HeaderProps> = ({
         )}
 
         <div className="flex items-center gap-3">
-          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-sky-500/30 transition-colors">
-            <Sparkles className="w-3.5 h-3.5 text-sky-400 animate-pulse" />
-            <span className="text-xs font-semibold tracking-wide text-zinc-200"></span>
-            <span className="text-[10px] font-mono text-zinc-500 pl-1 border-l border-zinc-800">Flash 3.8</span>
+          <div className="flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.08] hover:border-[#A3FF12]/30 transition-colors">
+            <Sparkles className="w-3.5 h-3.5 text-[#A3FF12] animate-pulse" />
+            <span className="text-xs font-semibold tracking-wide text-[#FFFFFF]"></span>
+            <span className="text-[10px] font-mono text-[#A0A0A0] pl-1 border-l border-[#2D2D2D]">Flash 3.8</span>
           </div>
 
           {/* Voice Mode Active Pill */}
           {voiceModeOnly && (
-            <span className="hidden sm:flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full bg-sky-950/60 border border-sky-400/40 text-sky-300 animate-pulse font-medium shadow-[0_0_12px_rgba(56,189,248,0.2)]">
+            <span className="hidden sm:flex items-center gap-1.5 text-[11px] px-3 py-1 rounded-full bg-sky-950/60 border border-[#A3FF12]/40 text-sky-300 animate-pulse font-medium shadow-[0_0_12px_rgba(56,189,248,0.2)]">
               <Mic className="w-3 h-3" />
               Voice Mode
             </span>
@@ -78,18 +78,18 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onToggleWebSearch}
           className={`flex items-center gap-2 px-3 sm:px-3.5 py-1.5 rounded-xl border text-xs font-medium transition-all shadow-sm ${
             webSearchEnabled
-              ? 'bg-sky-950/40 border-sky-500/40 text-sky-200 hover:bg-sky-900/40 shadow-[0_0_15px_rgba(56,189,248,0.15)]'
-              : 'bg-zinc-900/60 border-zinc-800/80 text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800/60'
+              ? 'bg-sky-950/40 border-[#A3FF12]/40 text-sky-200 hover:bg-sky-900/40 shadow-[0_0_15px_rgba(56,189,248,0.15)]'
+              : 'bg-[#1A1A1A]/60 border-[#2D2D2D]/80 text-[#A0A0A0] hover:text-[#FFFFFF] hover:bg-[#1A1A1A]/60'
           }`}
           title={webSearchEnabled ? 'Web Grounding is Active (click to disable)' : 'Enable Live Web Grounding'}
         >
-          <Globe className={`w-3.5 h-3.5 ${webSearchEnabled ? 'text-sky-400 animate-pulse' : 'text-zinc-500'}`} />
+          <Globe className={`w-3.5 h-3.5 ${webSearchEnabled ? 'text-[#A3FF12] animate-pulse' : 'text-[#A0A0A0]'}`} />
           <span className="hidden md:inline">Web Grounding</span>
           <span
             className={`px-1.5 py-0.5 rounded-md text-[10px] font-mono font-bold uppercase tracking-wider ${
               webSearchEnabled
-                ? 'bg-sky-500/20 text-sky-300 border border-sky-400/30'
-                : 'bg-zinc-800 text-zinc-500'
+                ? 'bg-[#A3FF12]/20 text-sky-300 border border-[#A3FF12]/30'
+                : 'bg-[#1A1A1A] text-[#A0A0A0]'
             }`}
           >
             {webSearchEnabled ? 'Live' : 'Off'}
@@ -101,8 +101,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onToggleVoiceModeOnly}
           className={`p-2 sm:p-2.5 rounded-xl border text-xs transition-colors ${
             voiceModeOnly
-              ? 'bg-sky-500/20 text-sky-300 border-sky-500/40 shadow-[0_0_12px_rgba(56,189,248,0.2)]'
-              : 'bg-zinc-900/70 text-zinc-400 hover:text-zinc-200 border-white/[0.08] hover:bg-white/5'
+              ? 'bg-[#A3FF12]/20 text-sky-300 border-[#A3FF12]/40 shadow-[0_0_12px_rgba(56,189,248,0.2)]'
+              : 'bg-[#1A1A1A]/70 text-[#A0A0A0] hover:text-[#FFFFFF] border-white/[0.08] hover:bg-white/5'
           }`}
           title={voiceModeOnly ? 'Disable Voice-only mode' : 'Enable Voice-only mode'}
           aria-label="Toggle voice only mode"
@@ -115,8 +115,8 @@ export const Header: React.FC<HeaderProps> = ({
           onClick={onToggleVoiceMute}
           className={`p-2 sm:p-2.5 rounded-xl border text-xs transition-colors ${
             isGlobalVoiceMuted
-              ? 'bg-zinc-900/60 text-zinc-500 border-white/[0.08]'
-              : 'bg-zinc-900/70 text-sky-400 border-white/[0.08] hover:bg-white/5'
+              ? 'bg-[#1A1A1A]/60 text-[#A0A0A0] border-white/[0.08]'
+              : 'bg-[#1A1A1A]/70 text-[#A3FF12] border-white/[0.08] hover:bg-white/5'
           }`}
           title={isGlobalVoiceMuted ? 'Unmute AI Voice Readout' : 'Mute AI Voice Readout'}
           aria-label="Toggle AI audio readout"
@@ -127,7 +127,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Clear Chat */}
         <button
           onClick={onClearChat}
-          className="p-2 sm:p-2.5 rounded-xl bg-zinc-900/70 hover:bg-zinc-800/80 border border-white/[0.08] text-zinc-400 hover:text-rose-400 transition-colors"
+          className="p-2 sm:p-2.5 rounded-xl bg-[#1A1A1A]/70 hover:bg-[#1A1A1A]/80 border border-white/[0.08] text-[#A0A0A0] hover:text-rose-400 transition-colors"
           title="Clear conversation"
           aria-label="Clear chat messages"
         >
@@ -141,28 +141,28 @@ export const Header: React.FC<HeaderProps> = ({
         {user ? (
           <button
             onClick={onOpenProfile}
-            className="flex items-center gap-2.5 p-1 pl-1.5 pr-3 rounded-xl bg-zinc-900/70 hover:bg-zinc-800/80 border border-white/[0.08] hover:border-sky-500/40 transition-all group"
+            className="flex items-center gap-2.5 p-1 pl-1.5 pr-3 rounded-xl bg-[#1A1A1A]/70 hover:bg-[#1A1A1A]/80 border border-white/[0.08] hover:border-[#A3FF12]/40 transition-all group"
             title="Open Account & Settings"
           >
             <div className="relative">
               <img
                 src={user.avatar}
                 alt={user.name}
-                className="w-7 h-7 rounded-lg object-cover border border-zinc-700 group-hover:border-sky-400/50"
+                className="w-7 h-7 rounded-lg object-cover border border-[#2D2D2D] group-hover:border-[#A3FF12]/50"
               />
               <span className="absolute -bottom-0.5 -right-0.5 w-2 h-2 bg-emerald-400 border border-zinc-950 rounded-full" />
             </div>
             <div className="hidden md:flex flex-col items-start leading-tight">
-              <span className="text-xs font-medium text-zinc-200 group-hover:text-sky-200 transition-colors">
+              <span className="text-xs font-medium text-[#FFFFFF] group-hover:text-sky-200 transition-colors">
                 {user.name.split(' ')[0]}
               </span>
-              <span className="text-[10px] font-mono text-zinc-400">{user.plan}</span>
+              <span className="text-[10px] font-mono text-[#A0A0A0]">{user.plan}</span>
             </div>
           </button>
         ) : (
           <button
             onClick={() => onOpenAuth('signin')}
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-sky-500 hover:bg-sky-400 text-zinc-950 font-bold text-xs transition-all shadow-md active:scale-95"
+            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-[#A3FF12] hover:bg-sky-400 text-zinc-950 font-bold text-xs transition-all shadow-md active:scale-95"
           >
             <LogIn className="w-3.5 h-3.5" />
             <span>Sign In</span>

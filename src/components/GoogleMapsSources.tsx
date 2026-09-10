@@ -26,7 +26,7 @@ export const GoogleMapsSources: React.FC<GoogleMapsSourcesProps> = ({ sources = 
             <MapPin className="w-3 h-3 text-rose-400 animate-pulse" />
             Google Maps Grounding
           </span>
-          <span className="text-[11px] text-zinc-400">
+          <span className="text-[11px] text-[#A0A0A0]">
             {sources.length} verified place {sources.length === 1 ? 'citation' : 'citations'} retrieved
           </span>
         </div>
@@ -39,7 +39,7 @@ export const GoogleMapsSources: React.FC<GoogleMapsSourcesProps> = ({ sources = 
 
       {/* Expanded Sources Grid */}
       {isOpen && (
-        <div className="p-3 border-t border-rose-500/20 bg-zinc-950/80 space-y-2">
+        <div className="p-3 border-t border-rose-500/20 bg-[#0F0F0F]/80 space-y-2">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
             {sources.map((source, idx) => {
               // Append compliance attribution tracking if missing
@@ -54,14 +54,14 @@ export const GoogleMapsSources: React.FC<GoogleMapsSourcesProps> = ({ sources = 
                   href={finalUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-between p-2.5 rounded-lg bg-zinc-900/80 hover:bg-rose-950/40 border border-zinc-800/80 hover:border-rose-500/40 text-zinc-300 hover:text-rose-200 transition-all group"
+                  className="flex items-center justify-between p-2.5 rounded-lg bg-[#1A1A1A]/80 hover:bg-rose-950/40 border border-[#2D2D2D]/80 hover:border-rose-500/40 text-[#A0A0A0] hover:text-rose-200 transition-all group"
                 >
                   <div className="min-w-0 pr-2">
-                    <div className="text-xs font-medium text-zinc-200 group-hover:text-rose-300 truncate">
+                    <div className="text-xs font-medium text-[#FFFFFF] group-hover:text-rose-300 truncate">
                       {source.title || 'Google Maps Verified Place'}
                     </div>
                     {source.snippet ? (
-                      <div className="text-[10px] text-zinc-400 truncate mt-0.5">
+                      <div className="text-[10px] text-[#A0A0A0] truncate mt-0.5">
                         {source.snippet}
                       </div>
                     ) : (
@@ -71,13 +71,13 @@ export const GoogleMapsSources: React.FC<GoogleMapsSourcesProps> = ({ sources = 
                       </div>
                     )}
                   </div>
-                  <ExternalLink className="w-3.5 h-3.5 text-zinc-500 group-hover:text-rose-400 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+                  <ExternalLink className="w-3.5 h-3.5 text-[#A0A0A0] group-hover:text-rose-400 shrink-0 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
                 </a>
               );
             })}
           </div>
 
-          <div className="pt-1 text-[10px] text-zinc-500 font-mono flex items-center justify-between">
+          <div className="pt-1 text-[10px] text-[#A0A0A0] font-mono flex items-center justify-between">
             <span>Authoritative Google Maps Platform Reference</span>
             <span>ID: gmp_mcp_codeassist_v1_aistudio</span>
           </div>

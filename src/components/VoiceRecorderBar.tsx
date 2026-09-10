@@ -144,7 +144,7 @@ export const VoiceRecorderBar: React.FC<VoiceRecorderBarProps> = ({
           </div>
           <button
             onClick={handleCancel}
-            className="px-3 py-1 bg-zinc-800 hover:bg-zinc-700 text-zinc-200 rounded-lg"
+            className="px-3 py-1 bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#FFFFFF] rounded-lg"
           >
             Dismiss
           </button>
@@ -160,14 +160,14 @@ export const VoiceRecorderBar: React.FC<VoiceRecorderBarProps> = ({
 
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-zinc-100 uppercase tracking-wider">
+                <span className="text-xs font-bold text-[#FFFFFF] uppercase tracking-wider">
                   Listening to Voice Note...
                 </span>
                 <span className="font-mono text-xs font-semibold text-emerald-400 bg-emerald-950/60 px-2 py-0.5 rounded border border-emerald-500/30">
                   {formatTimer(seconds)}
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-400 mt-0.5">
+              <p className="text-[11px] text-[#A0A0A0] mt-0.5">
                 Speak your question, instruction, or cloud task.
               </p>
             </div>
@@ -193,7 +193,7 @@ export const VoiceRecorderBar: React.FC<VoiceRecorderBarProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleCancel}
-              className="p-2 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 transition-colors"
+              className="p-2 rounded-xl bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#A0A0A0] hover:text-[#FFFFFF] transition-colors"
               title="Cancel recording"
               aria-label="Cancel recording"
             >
@@ -222,13 +222,13 @@ export const VoiceRecorderBar: React.FC<VoiceRecorderBarProps> = ({
             </button>
 
             <div>
-              <div className="text-xs font-semibold text-zinc-100 flex items-center gap-2">
+              <div className="text-xs font-semibold text-[#FFFFFF] flex items-center gap-2">
                 <span>Voice Note Ready</span>
                 <span className="font-mono text-emerald-400 text-xs">
                   ({formatTimer(recordedData.duration)})
                 </span>
               </div>
-              <p className="text-[11px] text-zinc-400">
+              <p className="text-[11px] text-[#A0A0A0]">
                 Ready to send to CloudConnect AI.
               </p>
             </div>
@@ -237,9 +237,9 @@ export const VoiceRecorderBar: React.FC<VoiceRecorderBarProps> = ({
           <div className="flex items-center gap-2">
             <button
               onClick={handleCancel}
-              className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-xs transition-colors flex items-center gap-1.5"
+              className="px-3 py-1.5 rounded-xl bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#A0A0A0] text-xs transition-colors flex items-center gap-1.5"
             >
-              <Trash2 className="w-3.5 h-3.5 text-zinc-400" />
+              <Trash2 className="w-3.5 h-3.5 text-[#A0A0A0]" />
               Re-record
             </button>
 

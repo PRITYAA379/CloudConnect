@@ -1,8 +1,11 @@
 import express from "express";
 import path from "path";
 import dotenv from "dotenv";
-import { GoogleGenAI } from "@google/genai";
+import { GoogleGenAI, Modality, ActivityHandling } from "@google/genai";
 import { createServer as createViteServer } from "vite";
+import { createServer as createHttpServer } from "http";
+import { fileAgent } from "./src/utils/fileAgent";
+import { WebSocketServer, WebSocket } from "ws";
 
 dotenv.config();
 
@@ -34,7 +37,7 @@ async function startServer() {
   app.get("/api/health", (req, res) => {
     res.json({
       status: "ok",
-      model: "gemini-3.8-flash",
+      model: "",
       time: new Date().toISOString(),
       hasKey: !!process.env.GEMINI_API_KEY,
     });
@@ -451,7 +454,7 @@ What shall we explore or research together?`;
         userLocation,
         history = [],
         voiceModeOnly = false,
-        model = "gemini-3.8-flash",
+        model = "",
         attachments = [],
       } = req.body;
 
@@ -586,7 +589,7 @@ CRITICAL FORMATTING REQUIREMENT:
 
       // Config & Model Execution with Multi-Tier Fallback
       let response: any = null;
-      let usedModelName = model || "gemini-3.8-flash";
+      let usedModelName = model || "";
       let isQuotaFallback = false;
       let rawText = "";
       let transcript: string | undefined = undefined;
@@ -790,7 +793,7 @@ CRITICAL FORMATTING REQUIREMENT:
                 model: "gemini-3.1-flash-tts-preview",
                 contents: [{ parts: [{ text: speechSummary }] }],
                 config: {
-                  responseModalities: ["AUDIO"],
+                  responseModalities: [Modality.AUDIO],
                   speechConfig: {
                     voiceConfig: {
                       prebuiltVoiceConfig: { voiceName: "Zephyr" },
@@ -913,7 +916,7 @@ CRITICAL FORMATTING REQUIREMENT:
       try {
         response = await withTimeout(
           ai.models.generateContent({
-            model: "gemini-3.8-flash",
+            model: "",
             contents: [{ role: "user", parts: [{ text: prompt }] }],
             config: tryConfig,
           }),
@@ -1102,7 +1105,7 @@ CRITICAL FORMATTING REQUIREMENT:
           model: "gemini-3.1-flash-tts-preview",
           contents: [{ parts: [{ text: cleanText }] }],
           config: {
-            responseModalities: ["AUDIO"],
+            responseModalities: [Modality.AUDIO],
             speechConfig: {
               voiceConfig: {
                 prebuiltVoiceConfig: { voiceName: voice },
@@ -1118,8 +1121,37 @@ CRITICAL FORMATTING REQUIREMENT:
         return res.json({ fallbackToSpeechSynthesis: true, voice });
       }
 
+      // Gemini TTS returns raw PCM audio.
+      // Wrap the PCM data in a WAV container for browser playback.
+      const pcmBuffer = Buffer.from(audioBase64, "base64");
+      const sampleRate = 24000;
+      const channels = 1;
+      const bitsPerSample = 16;
+      const byteRate = sampleRate * channels * bitsPerSample / 8;
+      const blockAlign = channels * bitsPerSample / 8;
+
+      const wavHeader = Buffer.alloc(44);
+
+      wavHeader.write("RIFF", 0);
+      wavHeader.writeUInt32LE(36 + pcmBuffer.length, 4);
+      wavHeader.write("WAVE", 8);
+
+      wavHeader.write("fmt ", 12);
+      wavHeader.writeUInt32LE(16, 16);
+      wavHeader.writeUInt16LE(1, 20);
+      wavHeader.writeUInt16LE(channels, 22);
+      wavHeader.writeUInt32LE(sampleRate, 24);
+      wavHeader.writeUInt32LE(byteRate, 28);
+      wavHeader.writeUInt16LE(blockAlign, 32);
+      wavHeader.writeUInt16LE(bitsPerSample, 34);
+
+      wavHeader.write("data", 36);
+      wavHeader.writeUInt32LE(pcmBuffer.length, 40);
+
+      const wavBuffer = Buffer.concat([wavHeader, pcmBuffer]);
+
       res.json({
-        audioBase64,
+        audioBase64: wavBuffer.toString("base64"),
         voice,
       });
     } catch (err: any) {
@@ -1146,8 +1178,188 @@ CRITICAL FORMATTING REQUIREMENT:
     });
   }
 
-  app.listen(PORT, "0.0.0.0", () => {
+  const httpServer = createHttpServer(app);
+
+  const wss = new WebSocketServer({ server: httpServer, path: "/api/live" });
+
+  wss.on("connection", async (client: WebSocket) => {
+    console.log("Live Talk client connected");
+
+    let session: any = null;
+
+    try {
+      session = await getAI().live.connect({
+        model: "gemini-2.5-flash-native-audio-preview-12-2025",
+        callbacks: {
+          onopen: () => {
+            console.log("Gemini Live API socket opened");
+          },
+          onmessage: (response: any) => {
+            console.log(
+              "GEMINI LIVE MESSAGE:",
+              JSON.stringify(response).slice(0, 2000)
+            );
+            if (client.readyState !== WebSocket.OPEN) return;
+
+            const serverContent = response.serverContent;
+
+            if (serverContent?.modelTurn?.parts) {
+              for (const part of serverContent.modelTurn.parts) {
+                if (part.inlineData?.data) {
+                  client.send(
+                    JSON.stringify({
+                      type: "audio",
+                      audioBase64: part.inlineData.data,
+                      mimeType:
+                        part.inlineData.mimeType || "audio/pcm;rate=24000",
+                    })
+                  );
+                }
+
+                if (part.text) {
+                  client.send(
+                    JSON.stringify({
+                      type: "text",
+                      text: part.text,
+                    })
+                  );
+                }
+              }
+            }
+
+            if (serverContent?.inputTranscription?.text) {
+              client.send(
+                JSON.stringify({
+                  type: "userTranscript",
+                  text: serverContent.inputTranscription.text,
+                })
+              );
+            }
+
+            if (serverContent?.outputTranscription?.text) {
+              client.send(
+                JSON.stringify({
+                  type: "assistantTranscript",
+                  text: serverContent.outputTranscription.text,
+                })
+              );
+            }
+
+            if (serverContent?.interrupted) {
+              client.send(JSON.stringify({ type: "interrupted" }));
+            }
+
+            if (serverContent?.turnComplete) {
+              client.send(JSON.stringify({ type: "turnComplete" }));
+            }
+          },
+          onerror: (event: any) => {
+            console.error("Gemini Live API error:", event?.message || event);
+          },
+          onclose: (event: any) => {
+            console.log("Gemini Live API socket closed:", event?.reason || "");
+          },
+        },
+        config: {
+          responseModalities: [Modality.AUDIO],
+          realtimeInputConfig: {
+            automaticActivityDetection: {
+              disabled: false,
+              prefixPaddingMs: 300,
+              silenceDurationMs: 700,
+            },
+            activityHandling: ActivityHandling.START_OF_ACTIVITY_INTERRUPTS,
+          },
+          systemInstruction:
+            "You are CloudConnect Live Talk. Have a natural, conversational voice conversation with the user. Keep responses concise and speak naturally. Do not wait for the user to press send. Respond naturally when their turn ends.",
+        },
+      });
+
+      client.on("message", (raw) => {
+        if (!session) return;
+
+        try {
+          const data = JSON.parse(raw.toString());
+
+          if (data.type === "audio" && data.audioBase64) {
+            session.sendRealtimeInput({
+              audio: {
+                data: data.audioBase64,
+                mimeType: data.mimeType || "audio/pcm;rate=16000",
+              },
+            });
+          }
+
+          if (data.type === "text" && data.text) {
+            session.sendClientContent({
+              turns: [
+                {
+                  role: "user",
+                  parts: [{ text: data.text }],
+                },
+              ],
+              turnComplete: true,
+            });
+          }
+
+          if (data.type === "interrupt") {
+            session.sendRealtimeInput({
+              audioStreamEnd: true,
+            });
+          }
+        } catch (error) {
+          console.error("Live Talk input error:", error);
+        }
+      });
+
+      client.send(JSON.stringify({ type: "ready" }));
+    } catch (error) {
+      console.error("Live Talk session error:", error);
+
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(
+          JSON.stringify({
+            type: "error",
+            message: "Could not start Live Talk.",
+          })
+        );
+      }
+    }
+
+    client.on("close", () => {
+      console.log("Live Talk client disconnected");
+
+      try {
+        session?.close?.();
+      } catch {}
+    });
+  });
+
+  
+app.post("/api/workspace/file", async (req, res) => {
+  try {
+    const result = await fileAgent(req.body);
+
+    res.json({
+      success: true,
+      ...result,
+    });
+  } catch (error) {
+    console.error("Workspace File Agent error:", error);
+
+    res.status(400).json({
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : "Workspace file operation failed.",
+    });
+  }
+});
+
+httpServer.listen(PORT, "0.0.0.0", () => {
     console.log(`CloudConnect AI Server running on port ${PORT}`);
+    console.log(`CloudConnect Live Talk WebSocket: ws://localhost:${PORT}/api/live`);
   });
 }
 

@@ -124,21 +124,21 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto">
-      <div className="relative w-full max-w-4xl rounded-2xl bg-zinc-900 border border-zinc-800 shadow-2xl overflow-hidden flex flex-col my-8 max-h-[90vh]">
+      <div className="relative w-full max-w-4xl rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] shadow-2xl overflow-hidden flex flex-col my-8 max-h-[90vh]">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-zinc-800 bg-zinc-950/60">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#2D2D2D] bg-[#0F0F0F]/60">
           <div className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 text-zinc-950 flex items-center justify-center font-bold shadow-md">
               <Sparkles className="w-5 h-5 fill-current" />
             </div>
             <div>
-              <h2 className="text-base font-bold text-zinc-100 flex items-center gap-2">
+              <h2 className="text-base font-bold text-[#FFFFFF] flex items-center gap-2">
                 AI Image Studio
                 <span className="text-[10px] font-mono font-medium px-2 py-0.5 rounded-full bg-emerald-950 border border-emerald-500/30 text-emerald-400">
                   gemini-3.1-flash-image
                 </span>
               </h2>
-              <p className="text-xs text-zinc-400">
+              <p className="text-xs text-[#A0A0A0]">
                 Generate high-resolution images, illustrations, and artwork from text or photos
               </p>
             </div>
@@ -146,7 +146,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
 
           <button
             onClick={onClose}
-            className="p-1.5 rounded-lg text-zinc-400 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+            className="p-1.5 rounded-lg text-[#A0A0A0] hover:text-[#FFFFFF] hover:bg-[#1A1A1A] transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -159,7 +159,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
             {/* Prompt Input */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-zinc-200">
+                <label className="text-xs font-semibold text-[#FFFFFF]">
                   Prompt Description
                 </label>
                 <button
@@ -180,13 +180,13 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                 onChange={(e) => setPrompt(e.target.value)}
                 rows={3}
                 placeholder="Describe what you want to create in vivid detail (subject, atmosphere, lighting, style)..."
-                className="w-full rounded-xl bg-zinc-950 border border-zinc-800 px-3.5 py-2.5 text-xs text-zinc-100 placeholder-zinc-500 focus:outline-none focus:border-emerald-500/60 leading-relaxed resize-none"
+                className="w-full rounded-xl bg-[#0F0F0F] border border-[#2D2D2D] px-3.5 py-2.5 text-xs text-[#FFFFFF] placeholder-zinc-500 focus:outline-none focus:border-emerald-500/60 leading-relaxed resize-none"
               />
             </div>
 
             {/* Style Presets Grid */}
             <div>
-              <label className="text-xs font-semibold text-zinc-200 block mb-1.5">
+              <label className="text-xs font-semibold text-[#FFFFFF] block mb-1.5">
                 Artistic Style
               </label>
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -198,11 +198,11 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                     className={`p-2 rounded-xl text-left border transition-all ${
                       selectedStyle === style.id
                         ? 'bg-emerald-950/60 border-emerald-500/60 text-emerald-300 shadow-sm'
-                        : 'bg-zinc-950/60 border-zinc-800/80 text-zinc-400 hover:border-zinc-700 hover:text-zinc-200'
+                        : 'bg-[#0F0F0F]/60 border-[#2D2D2D]/80 text-[#A0A0A0] hover:border-[#2D2D2D] hover:text-[#FFFFFF]'
                     }`}
                   >
                     <div className="text-[11px] font-bold truncate">{style.name}</div>
-                    <div className="text-[9px] text-zinc-500 truncate mt-0.5">{style.desc}</div>
+                    <div className="text-[9px] text-[#A0A0A0] truncate mt-0.5">{style.desc}</div>
                   </button>
                 ))}
               </div>
@@ -211,7 +211,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
             {/* Aspect Ratio and Resolution */}
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="text-xs font-semibold text-zinc-200 block mb-1.5">
+                <label className="text-xs font-semibold text-[#FFFFFF] block mb-1.5">
                   Aspect Ratio
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
@@ -223,7 +223,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                       className={`px-2 py-1.5 rounded-lg text-center text-xs font-mono transition-all border ${
                         aspectRatio === ratio.id
                           ? 'bg-emerald-500 text-zinc-950 font-bold border-emerald-400'
-                          : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                          : 'bg-[#0F0F0F] border-[#2D2D2D] text-[#A0A0A0] hover:text-[#FFFFFF]'
                       }`}
                     >
                       {ratio.id}
@@ -233,7 +233,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
               </div>
 
               <div>
-                <label className="text-xs font-semibold text-zinc-200 block mb-1.5">
+                <label className="text-xs font-semibold text-[#FFFFFF] block mb-1.5">
                   Resolution
                 </label>
                 <div className="grid grid-cols-3 gap-1.5">
@@ -245,7 +245,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                       className={`px-2 py-1.5 rounded-lg text-center text-xs font-mono transition-all border ${
                         imageSize === size
                           ? 'bg-emerald-500 text-zinc-950 font-bold border-emerald-400'
-                          : 'bg-zinc-950 border-zinc-800 text-zinc-400 hover:text-zinc-200'
+                          : 'bg-[#0F0F0F] border-[#2D2D2D] text-[#A0A0A0] hover:text-[#FFFFFF]'
                       }`}
                     >
                       {size}
@@ -258,8 +258,8 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
             {/* Optional Reference Image (Edit Image / Photo Transform) */}
             <div>
               <div className="flex items-center justify-between mb-1.5">
-                <label className="text-xs font-semibold text-zinc-300 flex items-center gap-1.5">
-                  <Upload className="w-3.5 h-3.5 text-zinc-400" />
+                <label className="text-xs font-semibold text-[#A0A0A0] flex items-center gap-1.5">
+                  <Upload className="w-3.5 h-3.5 text-[#A0A0A0]" />
                   Starting Reference Photo (Optional)
                 </label>
                 {referenceImage && (
@@ -274,19 +274,19 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
               </div>
 
               {referenceImage ? (
-                <div className="flex items-center gap-3 p-2 rounded-xl bg-zinc-950 border border-zinc-800">
+                <div className="flex items-center gap-3 p-2 rounded-xl bg-[#0F0F0F] border border-[#2D2D2D]">
                   <img
                     src={referenceImage}
                     alt="Reference"
                     referrerPolicy="no-referrer"
-                    className="w-12 h-12 object-cover rounded-lg border border-zinc-700"
+                    className="w-12 h-12 object-cover rounded-lg border border-[#2D2D2D]"
                   />
-                  <div className="text-xs text-zinc-300 flex-1">
+                  <div className="text-xs text-[#A0A0A0] flex-1">
                     Reference photo loaded for image-to-image editing
                   </div>
                 </div>
               ) : (
-                <label className="flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-zinc-800 hover:border-emerald-500/40 bg-zinc-950/40 hover:bg-zinc-950 text-zinc-400 text-xs cursor-pointer transition-colors">
+                <label className="flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-[#2D2D2D] hover:border-emerald-500/40 bg-[#0F0F0F]/40 hover:bg-[#0F0F0F] text-[#A0A0A0] text-xs cursor-pointer transition-colors">
                   <ImageIcon className="w-4 h-4 text-emerald-400" />
                   <span>Upload a photo to transform or edit</span>
                   <input
@@ -313,7 +313,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
               className={`w-full py-3 rounded-xl flex items-center justify-center gap-2 text-xs font-bold transition-all shadow-md ${
                 prompt.trim() && !isGenerating
                   ? 'bg-emerald-500 hover:bg-emerald-400 text-zinc-950 shadow-[0_0_15px_rgba(16,185,129,0.3)] active:scale-[0.99]'
-                  : 'bg-zinc-800 text-zinc-500 cursor-not-allowed'
+                  : 'bg-[#1A1A1A] text-[#A0A0A0] cursor-not-allowed'
               }`}
             >
               {isGenerating ? (
@@ -331,10 +331,10 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
           </div>
 
           {/* Preview Column (Right) */}
-          <div className="lg:col-span-5 flex flex-col items-center justify-center min-h-[320px] rounded-2xl bg-zinc-950 border border-zinc-800/80 p-4 relative overflow-hidden">
+          <div className="lg:col-span-5 flex flex-col items-center justify-center min-h-[320px] rounded-2xl bg-[#0F0F0F] border border-[#2D2D2D]/80 p-4 relative overflow-hidden">
             {generatedResult ? (
               <div className="w-full flex flex-col items-center gap-3">
-                <div className="relative group w-full rounded-xl overflow-hidden border border-zinc-800 bg-zinc-900 flex items-center justify-center">
+                <div className="relative group w-full rounded-xl overflow-hidden border border-[#2D2D2D] bg-[#1A1A1A] flex items-center justify-center">
                   <img
                     src={generatedResult.url}
                     alt={generatedResult.prompt}
@@ -343,7 +343,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                   />
                 </div>
 
-                <div className="w-full flex items-center justify-between text-[11px] text-zinc-400 font-mono px-1">
+                <div className="w-full flex items-center justify-between text-[11px] text-[#A0A0A0] font-mono px-1">
                   <span>Ratio: {generatedResult.aspectRatio}</span>
                   <span className="text-emerald-400">Generated</span>
                 </div>
@@ -353,7 +353,7 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                   <a
                     href={generatedResult.url}
                     download={`ai-image-${Date.now()}.png`}
-                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-zinc-900 hover:bg-zinc-800 border border-zinc-800 text-zinc-200 text-xs font-semibold transition-colors"
+                    className="flex items-center justify-center gap-1.5 py-2 px-3 rounded-xl bg-[#1A1A1A] hover:bg-[#1A1A1A] border border-[#2D2D2D] text-[#FFFFFF] text-xs font-semibold transition-colors"
                   >
                     <Download className="w-3.5 h-3.5 text-emerald-400" />
                     <span>Download</span>
@@ -369,11 +369,11 @@ export const ImageStudioModal: React.FC<ImageStudioModalProps> = ({
                 </div>
               </div>
             ) : (
-              <div className="text-center p-6 text-zinc-500">
-                <div className="w-14 h-14 rounded-2xl bg-zinc-900 border border-zinc-800 flex items-center justify-center mx-auto mb-3 text-zinc-600">
+              <div className="text-center p-6 text-[#A0A0A0]">
+                <div className="w-14 h-14 rounded-2xl bg-[#1A1A1A] border border-[#2D2D2D] flex items-center justify-center mx-auto mb-3 text-zinc-600">
                   <ImageIcon className="w-7 h-7" />
                 </div>
-                <div className="text-xs font-semibold text-zinc-400">Image Canvas Preview</div>
+                <div className="text-xs font-semibold text-[#A0A0A0]">Image Canvas Preview</div>
                 <div className="text-[11px] text-zinc-600 mt-1 max-w-xs">
                   Your generated artwork will appear here in high-resolution with direct download and chat insertion controls.
                 </div>

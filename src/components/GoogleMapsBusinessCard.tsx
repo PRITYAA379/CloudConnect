@@ -59,7 +59,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
   };
 
   return (
-    <div className="my-3 rounded-2xl bg-gradient-to-b from-zinc-900/90 via-zinc-950/95 to-zinc-950 border border-white/[0.08] hover:border-sky-500/40 transition-all duration-300 shadow-xl overflow-hidden backdrop-blur-md">
+    <div className="my-3 rounded-2xl bg-gradient-to-b from-zinc-900/90 via-zinc-950/95 to-zinc-950 border border-white/[0.08] hover:border-[#A3FF12]/40 transition-all duration-300 shadow-xl overflow-hidden backdrop-blur-md">
       {/* Top Banner with Category & Rating */}
       <div className="px-4 py-3.5 bg-white/[0.02] border-b border-white/[0.06] flex items-center justify-between gap-3 flex-wrap">
         <div className="flex items-center gap-2">
@@ -71,7 +71,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
               Google Maps Verified Place
             </span>
             {business.category && (
-              <span className="text-xs text-zinc-400 block sm:inline sm:before:content-['•'] sm:before:mx-1.5">
+              <span className="text-xs text-[#A0A0A0] block sm:inline sm:before:content-['•'] sm:before:mx-1.5">
                 {business.category}
               </span>
             )}
@@ -81,7 +81,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
         {/* Rating and Price Badge */}
         <div className="flex items-center gap-2">
           {business.priceLevel && (
-            <span className="px-2 py-0.5 rounded-md bg-white/[0.06] text-zinc-300 font-mono text-xs font-semibold">
+            <span className="px-2 py-0.5 rounded-md bg-white/[0.06] text-[#A0A0A0] font-mono text-xs font-semibold">
               {business.priceLevel}
             </span>
           )}
@@ -91,7 +91,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span>{business.rating.toFixed(1)}</span>
               {business.userRatingCount && (
-                <span className="text-[10px] text-zinc-400 font-normal">
+                <span className="text-[10px] text-[#A0A0A0] font-normal">
                   ({business.userRatingCount.toLocaleString()})
                 </span>
               )}
@@ -103,7 +103,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
               className={`px-2 py-0.5 rounded-full text-[11px] font-medium border ${
                 business.isOpenNow
                   ? 'bg-emerald-500/10 border-emerald-500/30 text-emerald-300'
-                  : 'bg-zinc-800 border-zinc-700 text-zinc-400'
+                  : 'bg-[#1A1A1A] border-[#2D2D2D] text-[#A0A0A0]'
               }`}
             >
               {business.isOpenNow ? 'Open Now' : 'Closed'}
@@ -117,11 +117,11 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
         {/* Title */}
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base sm:text-lg font-bold text-zinc-100 tracking-tight flex items-center gap-2">
+            <h3 className="text-base sm:text-lg font-bold text-[#FFFFFF] tracking-tight flex items-center gap-2">
               {business.name}
             </h3>
             {business.cityCountry && (
-              <p className="text-xs text-zinc-400 mt-0.5">
+              <p className="text-xs text-[#A0A0A0] mt-0.5">
                 {business.cityCountry}
               </p>
             )}
@@ -130,7 +130,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
           {onOpenMapModal && (
             <button
               onClick={() => onOpenMapModal(business)}
-              className="shrink-0 px-3 py-1.5 rounded-xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/30 text-sky-300 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              className="shrink-0 px-3 py-1.5 rounded-xl bg-[#A3FF12]/10 hover:bg-[#A3FF12]/20 border border-[#A3FF12]/30 text-sky-300 text-xs font-medium flex items-center gap-1.5 transition-colors"
               title="Open interactive map modal"
             >
               <MapIcon className="w-3.5 h-3.5" />
@@ -141,21 +141,21 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
 
         {/* Editorial Summary / Description */}
         {business.editorialSummary && (
-          <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed bg-white/[0.02] p-3 rounded-xl border border-white/[0.04]">
+          <p className="text-xs sm:text-sm text-[#A0A0A0] leading-relaxed bg-white/[0.02] p-3 rounded-xl border border-white/[0.04]">
             {business.editorialSummary}
           </p>
         )}
 
         {/* Address Row */}
         {(business.formattedAddress || business.address) && (
-          <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-zinc-900/60 border border-zinc-800/80 text-xs text-zinc-300">
+          <div className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-[#1A1A1A]/60 border border-[#2D2D2D]/80 text-xs text-[#A0A0A0]">
             <div className="flex items-center gap-2 min-w-0">
-              <MapPin className="w-3.5 h-3.5 text-zinc-400 shrink-0" />
+              <MapPin className="w-3.5 h-3.5 text-[#A0A0A0] shrink-0" />
               <span className="truncate">{business.formattedAddress || business.address}</span>
             </div>
             <button
               onClick={handleCopyAddress}
-              className="shrink-0 px-2 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 text-[11px] flex items-center gap-1 transition-colors"
+              className="shrink-0 px-2 py-1 rounded-lg bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#A0A0A0] text-[11px] flex items-center gap-1 transition-colors"
               title="Copy address"
             >
               {copiedAddress ? (
@@ -165,7 +165,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
                 </>
               ) : (
                 <>
-                  <Copy className="w-3 h-3 text-zinc-400" />
+                  <Copy className="w-3 h-3 text-[#A0A0A0]" />
                   <span>Copy</span>
                 </>
               )}
@@ -179,7 +179,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
             {business.keyHighlights.map((highlight, idx) => (
               <span
                 key={idx}
-                className="px-2.5 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[11px] text-zinc-300 flex items-center gap-1"
+                className="px-2.5 py-0.5 rounded-md bg-white/[0.04] border border-white/[0.08] text-[11px] text-[#A0A0A0] flex items-center gap-1"
               >
                 <Sparkles className="w-2.5 h-2.5 text-amber-400" />
                 {highlight}
@@ -190,7 +190,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
 
         {/* Review Snippet Quote */}
         {business.reviewsSnippet && (
-          <div className="text-xs text-zinc-400 italic border-l-2 border-rose-500/50 pl-3 py-1 bg-white/[0.01] rounded-r-lg">
+          <div className="text-xs text-[#A0A0A0] italic border-l-2 border-rose-500/50 pl-3 py-1 bg-white/[0.01] rounded-r-lg">
             "{business.reviewsSnippet}"
           </div>
         )}
@@ -200,17 +200,17 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
           <div className="pt-1">
             <button
               onClick={() => setShowHours(!showHours)}
-              className="text-xs text-zinc-400 hover:text-zinc-200 flex items-center gap-1.5 transition-colors"
+              className="text-xs text-[#A0A0A0] hover:text-[#FFFFFF] flex items-center gap-1.5 transition-colors"
             >
-              <Clock className="w-3.5 h-3.5 text-zinc-500" />
+              <Clock className="w-3.5 h-3.5 text-[#A0A0A0]" />
               <span>{showHours ? 'Hide operating hours' : 'View operating schedule'}</span>
               {showHours ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             </button>
 
             {showHours && (
-              <div className="mt-2 p-3 rounded-xl bg-zinc-900/80 border border-zinc-800 space-y-1 text-xs text-zinc-300 font-mono">
+              <div className="mt-2 p-3 rounded-xl bg-[#1A1A1A]/80 border border-[#2D2D2D] space-y-1 text-xs text-[#A0A0A0] font-mono">
                 {business.openingHours.map((line, idx) => (
-                  <div key={idx} className="flex justify-between py-0.5 border-b border-zinc-800/40 last:border-0">
+                  <div key={idx} className="flex justify-between py-0.5 border-b border-[#2D2D2D]/40 last:border-0">
                     <span>{line}</span>
                   </div>
                 ))}
@@ -236,9 +236,9 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
             href={getDirectionsUrl()}
             target="_blank"
             rel="noopener noreferrer"
-            className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors"
+            className="px-3 py-1.5 rounded-xl bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#FFFFFF] text-xs font-medium flex items-center gap-1.5 transition-colors"
           >
-            <Navigation className="w-3.5 h-3.5 text-sky-400" />
+            <Navigation className="w-3.5 h-3.5 text-[#A3FF12]" />
             <span>Get Directions</span>
           </a>
 
@@ -247,7 +247,7 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
               href={business.websiteUri}
               target="_blank"
               rel="noopener noreferrer"
-              className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#FFFFFF] text-xs font-medium flex items-center gap-1.5 transition-colors"
             >
               <Globe className="w-3.5 h-3.5 text-emerald-400" />
               <span>Website</span>
@@ -257,16 +257,16 @@ export const GoogleMapsBusinessCard: React.FC<GoogleMapsBusinessCardProps> = ({
           {business.phoneNumber && (
             <a
               href={`tel:${business.phoneNumber}`}
-              className="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 text-xs font-medium flex items-center gap-1.5 transition-colors"
+              className="px-3 py-1.5 rounded-xl bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#FFFFFF] text-xs font-medium flex items-center gap-1.5 transition-colors"
             >
-              <Phone className="w-3.5 h-3.5 text-indigo-400" />
+              <Phone className="w-3.5 h-3.5 text-[#A3FF12]" />
               <span>{business.phoneNumber}</span>
             </a>
           )}
         </div>
 
         {/* Compliance & Grounding Attribution Footnote */}
-        <div className="pt-1 text-[10px] text-zinc-500 font-mono flex items-center justify-between flex-wrap gap-2">
+        <div className="pt-1 text-[10px] text-[#A0A0A0] font-mono flex items-center justify-between flex-wrap gap-2">
           <span>Grounded with Google Maps Platform Data</span>
           <span>Attribution ID: gmp_mcp_codeassist_v1_aistudio</span>
         </div>

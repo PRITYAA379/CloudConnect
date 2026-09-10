@@ -78,7 +78,7 @@ export const VoiceMessageBubble: React.FC<VoiceMessageBubbleProps> = ({ voiceNot
               <Mic className="w-3.5 h-3.5" />
               Voice Note
             </span>
-            <span className="text-zinc-400 font-mono">
+            <span className="text-[#A0A0A0] font-mono">
               {formatSeconds(currentTime)} / {formatSeconds(totalDuration)}
             </span>
           </div>
@@ -95,7 +95,7 @@ export const VoiceMessageBubble: React.FC<VoiceMessageBubbleProps> = ({ voiceNot
                   className={`w-1 rounded-full transition-all duration-150 ${
                     isPassed
                       ? 'bg-emerald-400 shadow-[0_0_8px_rgba(52,211,153,0.5)]'
-                      : 'bg-zinc-700 hover:bg-zinc-600'
+                      : 'bg-[#2D2D2D] hover:bg-zinc-600'
                   }`}
                 />
               );
@@ -110,21 +110,21 @@ export const VoiceMessageBubble: React.FC<VoiceMessageBubbleProps> = ({ voiceNot
 
       {/* Recognized Transcription Box */}
       {voiceNote.transcription && (
-        <div className="bg-zinc-900/90 border border-zinc-800 rounded-xl p-3 text-xs text-zinc-300">
-          <div className="flex items-center justify-between font-medium text-zinc-400 mb-1">
+        <div className="bg-[#1A1A1A]/90 border border-[#2D2D2D] rounded-xl p-3 text-xs text-[#A0A0A0]">
+          <div className="flex items-center justify-between font-medium text-[#A0A0A0] mb-1">
             <span className="flex items-center gap-1">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block"></span>
               Transcribed Voice
             </span>
             <button
               onClick={() => setShowTranscript(!showTranscript)}
-              className="hover:text-zinc-200 transition-colors p-0.5"
+              className="hover:text-[#FFFFFF] transition-colors p-0.5"
             >
               {showTranscript ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
           </div>
           {showTranscript && (
-            <p className="italic text-zinc-200 leading-relaxed pl-1 border-l-2 border-emerald-500/40">
+            <p className="italic text-[#FFFFFF] leading-relaxed pl-1 border-l-2 border-emerald-500/40">
               "{voiceNote.transcription}"
             </p>
           )}

@@ -36,15 +36,15 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
       case 'book':
         return <BookOpen className="w-4 h-4 text-amber-400" />;
       case 'document':
-        return <FileText className="w-4 h-4 text-sky-400" />;
+        return <FileText className="w-4 h-4 text-[#A3FF12]" />;
       case 'video':
         return <Film className="w-4 h-4 text-purple-400" />;
       case 'audio':
         return <Music className="w-4 h-4 text-pink-400" />;
       case 'code':
-        return <Code className="w-4 h-4 text-indigo-400" />;
+        return <Code className="w-4 h-4 text-[#A3FF12]" />;
       default:
-        return <File className="w-4 h-4 text-zinc-400" />;
+        return <File className="w-4 h-4 text-[#A0A0A0]" />;
     }
   };
 
@@ -55,15 +55,15 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
       case 'book':
         return 'bg-amber-950/80 text-amber-400 border-amber-500/30';
       case 'document':
-        return 'bg-sky-950/80 text-sky-400 border-sky-500/30';
+        return 'bg-sky-950/80 text-[#A3FF12] border-[#A3FF12]/30';
       case 'video':
         return 'bg-purple-950/80 text-purple-400 border-purple-500/30';
       case 'audio':
         return 'bg-pink-950/80 text-pink-400 border-pink-500/30';
       case 'code':
-        return 'bg-indigo-950/80 text-indigo-400 border-indigo-500/30';
+        return 'bg-indigo-950/80 text-[#A3FF12] border-indigo-500/30';
       default:
-        return 'bg-zinc-800 text-zinc-300 border-zinc-700';
+        return 'bg-[#1A1A1A] text-[#A0A0A0] border-[#2D2D2D]';
     }
   };
 
@@ -76,13 +76,13 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
           <div
             key={att.id}
             onClick={() => onPreview && onPreview(att)}
-            className={`group relative flex items-center gap-2.5 p-2 rounded-xl bg-zinc-900/90 hover:bg-zinc-900 border border-zinc-800 hover:border-zinc-700 transition-all ${
+            className={`group relative flex items-center gap-2.5 p-2 rounded-xl bg-[#1A1A1A]/90 hover:bg-[#1A1A1A] border border-[#2D2D2D] hover:border-[#2D2D2D] transition-all ${
               onPreview ? 'cursor-pointer' : ''
             } max-w-xs shadow-sm`}
           >
             {/* Thumbnail or Icon */}
             {isImage ? (
-              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-zinc-700/80 bg-zinc-950">
+              <div className="w-10 h-10 rounded-lg overflow-hidden shrink-0 border border-[#2D2D2D]/80 bg-[#0F0F0F]">
                 <img
                   src={att.dataUrl}
                   alt={att.name}
@@ -91,7 +91,7 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
                 />
               </div>
             ) : (
-              <div className="w-10 h-10 rounded-lg bg-zinc-800/90 border border-zinc-700/70 flex items-center justify-center shrink-0">
+              <div className="w-10 h-10 rounded-lg bg-[#1A1A1A]/90 border border-[#2D2D2D]/70 flex items-center justify-center shrink-0">
                 {renderIcon(att.category)}
               </div>
             )}
@@ -99,7 +99,7 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
             {/* File Info */}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-1.5">
-                <span className="text-xs font-semibold text-zinc-200 truncate group-hover:text-white" title={att.name}>
+                <span className="text-xs font-semibold text-[#FFFFFF] truncate group-hover:text-white" title={att.name}>
                   {att.name}
                 </span>
               </div>
@@ -107,7 +107,7 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
                 <span className={`text-[10px] font-mono uppercase px-1.5 py-0.2 rounded border ${getCategoryBadgeClass(att.category)}`}>
                   {att.category}
                 </span>
-                <span className="text-[11px] font-mono text-zinc-500">
+                <span className="text-[11px] font-mono text-[#A0A0A0]">
                   {formatFileSize(att.size)}
                 </span>
               </div>
@@ -121,7 +121,7 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
                   e.stopPropagation();
                   onRemove(att.id);
                 }}
-                className="p-1 rounded-md text-zinc-500 hover:text-red-400 hover:bg-zinc-800/80 transition-colors"
+                className="p-1 rounded-md text-[#A0A0A0] hover:text-red-400 hover:bg-[#1A1A1A]/80 transition-colors"
                 title="Remove attachment"
               >
                 <X className="w-3.5 h-3.5" />
@@ -133,7 +133,7 @@ export const AttachmentList: React.FC<AttachmentListProps> = ({
                 href={att.dataUrl}
                 download={att.name}
                 onClick={(e) => e.stopPropagation()}
-                className="p-1 rounded-md text-zinc-500 hover:text-emerald-400 hover:bg-zinc-800/80 transition-colors"
+                className="p-1 rounded-md text-[#A0A0A0] hover:text-emerald-400 hover:bg-[#1A1A1A]/80 transition-colors"
                 title="Download file"
               >
                 <Download className="w-3.5 h-3.5" />

@@ -191,19 +191,19 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
     {
       title: 'Live Web Grounding Search',
       subtitle: 'Real-time facts, research papers, and live citations from the web',
-      icon: <Globe className="w-5 h-5 text-sky-400" />,
+      icon: <Globe className="w-5 h-5 text-[#A3FF12]" />,
       prompt: 'What are the most significant recent breakthroughs in AI multimodal agent architectures and deep reasoning models?',
     },
     {
       title: 'Analyze Books & Complex Documents',
       subtitle: 'Digest lengthy PDFs, extract key themes, citations, and summaries',
-      icon: <BookOpen className="w-5 h-5 text-cyan-400" />,
+      icon: <BookOpen className="w-5 h-5 text-[#A3FF12]" />,
       action: () => fileInputRef.current?.click(),
     },
     {
       title: 'Multimodal Image Studio',
       subtitle: 'Render high-resolution concept art, photos, and visual diagrams',
-      icon: <Sparkles className="w-5 h-5 text-indigo-400" />,
+      icon: <Sparkles className="w-5 h-5 text-[#A3FF12]" />,
       action: onOpenImageStudio,
     },
     {
@@ -216,7 +216,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
 
   return (
     <div 
-      className="flex-1 min-h-0 flex flex-col bg-[#030612] text-zinc-100 overflow-hidden relative"
+      className="flex-1 min-h-0 flex flex-col bg-[#030612] text-[#FFFFFF] overflow-hidden relative"
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
@@ -237,13 +237,13 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
 
       {/* Drag and Drop Active Overlay */}
       {isDragging && (
-        <div className="absolute inset-0 z-40 bg-[#040817]/90 backdrop-blur-md border-2 border-dashed border-sky-400 flex flex-col items-center justify-center p-6 pointer-events-none transition-all">
-          <div className="w-20 h-20 rounded-3xl bg-sky-500/20 border border-sky-400 flex items-center justify-center text-sky-300 mb-5 animate-bounce shadow-[0_0_30px_rgba(56,189,248,0.3)]">
+        <div className="absolute inset-0 z-40 bg-[#040817]/90 backdrop-blur-md border-2 border-dashed border-[#A3FF12] flex flex-col items-center justify-center p-6 pointer-events-none transition-all">
+          <div className="w-20 h-20 rounded-3xl bg-[#A3FF12]/20 border border-[#A3FF12] flex items-center justify-center text-sky-300 mb-5 animate-bounce shadow-[0_0_30px_rgba(56,189,248,0.3)]">
             <Upload className="w-10 h-10" />
           </div>
           <h3 className="text-xl font-bold text-white tracking-tight">Drop Files into Vast Canvas</h3>
           <p className="text-sm text-sky-200/80 mt-2 text-center max-w-md">
-            Books, PDFs, photos, research docs, code files, or audio — processed natively by Gemini 3.8 Flash.
+            Books, PDFs, photos, research docs, code files, or audio — processed natively by .
           </p>
         </div>
       )}
@@ -255,34 +255,34 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           <div className="max-w-4xl mx-auto py-12 sm:py-20 flex flex-col items-center justify-center text-center">
             {/* Celestial Emblem */}
             <div className="relative mb-6">
-              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-sky-600 via-indigo-600 to-cyan-400 text-white flex items-center justify-center font-bold shadow-[0_0_40px_rgba(56,189,248,0.3)] ring-1 ring-white/20">
+              <div className="w-20 h-20 rounded-3xl bg-gradient-to-tr from-[#A3FF12] via-[#A3FF12] to-[#A3FF12] text-white flex items-center justify-center font-bold shadow-[0_0_40px_rgba(56,189,248,0.3)] ring-1 ring-white/20">
                 <Sparkles className="w-10 h-10 fill-current animate-pulse" />
               </div>
-              <div className="absolute -inset-4 bg-sky-500/10 rounded-full blur-xl -z-10" />
+              <div className="absolute -inset-4 bg-[#A3FF12]/10 rounded-full blur-xl -z-10" />
             </div>
 
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight leading-tight">
               
             </h2>
-            <p className="text-sm sm:text-base text-zinc-400 mt-4 max-w-xl leading-relaxed font-light">
+            <p className="text-sm sm:text-base text-[#A0A0A0] mt-4 max-w-xl leading-relaxed font-light">
               Boundless multimodal cognition with verified live web search grounding, document understanding, image creation, and native voice synthesis.
             </p>
 
             {/* Feature Capability Tags */}
             <div className="flex flex-wrap items-center justify-center gap-2.5 mt-6 text-xs">
-              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300 flex items-center gap-2 backdrop-blur-sm">
-                <Globe className="w-3.5 h-3.5 text-sky-400" />
+              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#A0A0A0] flex items-center gap-2 backdrop-blur-sm">
+                <Globe className="w-3.5 h-3.5 text-[#A3FF12]" />
                 Live Web Grounding
               </span>
-              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300 flex items-center gap-2 backdrop-blur-sm">
-                <Upload className="w-3.5 h-3.5 text-cyan-400" />
+              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#A0A0A0] flex items-center gap-2 backdrop-blur-sm">
+                <Upload className="w-3.5 h-3.5 text-[#A3FF12]" />
                 Books &amp; High-Volume Docs
               </span>
-              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300 flex items-center gap-2 backdrop-blur-sm">
-                <ImageIcon className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#A0A0A0] flex items-center gap-2 backdrop-blur-sm">
+                <ImageIcon className="w-3.5 h-3.5 text-[#A3FF12]" />
                 AI Image Studio
               </span>
-              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-zinc-300 flex items-center gap-2 backdrop-blur-sm">
+              <span className="px-3.5 py-1.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[#A0A0A0] flex items-center gap-2 backdrop-blur-sm">
                 <Mic className="w-3.5 h-3.5 text-emerald-400" />
                 Conversational Voice
               </span>
@@ -300,17 +300,17 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                       onSendMessage(item.prompt);
                     }
                   }}
-                  className="p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-sky-500/40 transition-all duration-200 group text-left flex flex-col justify-between shadow-lg shadow-black/30 active:scale-[0.99]"
+                  className="p-5 rounded-2xl bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-[#A3FF12]/40 transition-all duration-200 group text-left flex flex-col justify-between shadow-lg shadow-black/30 active:scale-[0.99]"
                 >
                   <div className="flex items-center gap-3.5 mb-2.5">
                     <div className="p-2.5 rounded-xl bg-white/[0.05] border border-white/[0.08] group-hover:scale-110 transition-transform">
                       {item.icon}
                     </div>
-                    <h3 className="text-sm font-semibold text-zinc-100 group-hover:text-sky-300 transition-colors">
+                    <h3 className="text-sm font-semibold text-[#FFFFFF] group-hover:text-sky-300 transition-colors">
                       {item.title}
                     </h3>
                   </div>
-                  <p className="text-xs text-zinc-400 leading-relaxed pl-0.5">
+                  <p className="text-xs text-[#A0A0A0] leading-relaxed pl-0.5">
                     {item.subtitle}
                   </p>
                 </button>
@@ -334,11 +334,11 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
             {isLoading && (
               <div className="py-6 px-4 sm:px-6">
                 <div className="max-w-5xl mx-auto flex gap-4 items-center">
-                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-sky-600 to-cyan-400 text-white flex items-center justify-center font-bold text-xs shadow-md animate-pulse">
+                  <div className="w-8 h-8 rounded-xl bg-gradient-to-tr from-[#A3FF12] to-[#A3FF12] text-white flex items-center justify-center font-bold text-xs shadow-md animate-pulse">
                     <Sparkles className="w-4 h-4" />
                   </div>
                   <div className="flex items-center gap-2.5 text-xs text-sky-300 font-medium">
-                    <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+                    <Loader2 className="w-4 h-4 animate-spin text-[#A3FF12]" />
                     <span>Synthesizing intelligence &amp; grounding facts...</span>
                   </div>
                 </div>
@@ -351,7 +351,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
 
       {/* Voice Recording Drawer (when active) */}
       {isRecordingVoice && (
-        <div className="p-4 bg-[#050a1b] border-t border-sky-500/30 animate-slide-up z-20">
+        <div className="p-4 bg-[#050a1b] border-t border-[#A3FF12]/30 animate-slide-up z-20">
           <VoiceRecorderBar
             isRecording={isRecordingVoice}
             onSendVoiceNote={handleVoiceNoteSubmit}
@@ -366,14 +366,14 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           {/* Pending Attachments List */}
           {pendingAttachments.length > 0 && (
             <div className="p-3 bg-white/[0.04] backdrop-blur-md rounded-2xl border border-white/10 space-y-2">
-              <div className="flex items-center justify-between text-xs text-zinc-400 px-1">
+              <div className="flex items-center justify-between text-xs text-[#A0A0A0] px-1">
                 <span className="flex items-center gap-1.5 font-medium text-sky-300">
-                  <Upload className="w-3.5 h-3.5 text-sky-400" />
+                  <Upload className="w-3.5 h-3.5 text-[#A3FF12]" />
                   Ready to send ({pendingAttachments.length} file{pendingAttachments.length > 1 ? 's' : ''})
                 </span>
                 <button
                   onClick={() => setPendingAttachments([])}
-                  className="text-zinc-500 hover:text-zinc-300 text-[11px]"
+                  className="text-[#A0A0A0] hover:text-[#A0A0A0] text-[11px]"
                 >
                   Clear all
                 </button>
@@ -388,7 +388,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
           )}
 
           {/* Composer Capsule */}
-          <div className="relative rounded-2xl sm:rounded-3xl bg-[#090e1f]/90 backdrop-blur-xl border border-white/[0.12] focus-within:border-sky-500/60 transition-all duration-200 shadow-[0_12px_40px_rgba(0,0,0,0.6)] p-3 sm:p-4 space-y-3">
+          <div className="relative rounded-2xl sm:rounded-3xl bg-[#090e1f]/90 backdrop-blur-xl border border-white/[0.12] focus-within:border-[#A3FF12]/60 transition-all duration-200 shadow-[0_12px_40px_rgba(0,0,0,0.6)] p-3 sm:p-4 space-y-3">
             {/* Textarea Input */}
             <textarea
               ref={textareaRef}
@@ -405,7 +405,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                   ? "Add instructions for analyzing attached documents/photos..."
                   : "Ask anything, research live topics, explore code, or drop books and media..."
               }
-              className="w-full bg-transparent text-zinc-100 placeholder-zinc-500 text-sm sm:text-base outline-none resize-none max-h-48 leading-relaxed scrollbar-thin px-1"
+              className="w-full bg-transparent text-[#FFFFFF] placeholder-zinc-500 text-sm sm:text-base outline-none resize-none max-h-48 leading-relaxed scrollbar-thin px-1"
             />
 
             {/* Bottom Actions Bar */}
@@ -417,13 +417,13 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={isUploading}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-300 hover:text-white border border-white/[0.08] text-xs transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-[#A0A0A0] hover:text-white border border-white/[0.08] text-xs transition-colors"
                   title="Upload books, PDFs, photos, documents"
                 >
                   {isUploading ? (
-                    <Loader2 className="w-4 h-4 animate-spin text-sky-400" />
+                    <Loader2 className="w-4 h-4 animate-spin text-[#A3FF12]" />
                   ) : (
-                    <Paperclip className="w-4 h-4 text-zinc-400" />
+                    <Paperclip className="w-4 h-4 text-[#A0A0A0]" />
                   )}
                   <span className="hidden sm:inline">Attach Media / Books</span>
                 </button>
@@ -435,7 +435,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                   className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-indigo-300 hover:text-indigo-200 border border-white/[0.08] text-xs transition-colors"
                   title="Open AI Image Studio"
                 >
-                  <ImageIcon className="w-4 h-4 text-indigo-400" />
+                  <ImageIcon className="w-4 h-4 text-[#A3FF12]" />
                   <span className="hidden sm:inline">Image Studio</span>
                 </button>
 
@@ -445,12 +445,12 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                   onClick={onToggleWebSearch}
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs transition-all ${
                     webSearchEnabled
-                      ? 'bg-sky-500/15 border-sky-400/40 text-sky-300'
-                      : 'bg-white/[0.03] border-white/[0.08] text-zinc-400 hover:text-zinc-200'
+                      ? 'bg-[#A3FF12]/15 border-[#A3FF12]/40 text-sky-300'
+                      : 'bg-white/[0.03] border-white/[0.08] text-[#A0A0A0] hover:text-[#FFFFFF]'
                   }`}
                   title={webSearchEnabled ? "Live Web Search is active" : "Enable Web Search"}
                 >
-                  <Globe className={`w-3.5 h-3.5 ${webSearchEnabled ? 'text-sky-400' : 'text-zinc-500'}`} />
+                  <Globe className={`w-3.5 h-3.5 ${webSearchEnabled ? 'text-[#A3FF12]' : 'text-[#A0A0A0]'}`} />
                   <span className="hidden md:inline">Web Grounding</span>
                   <span className="text-[10px] font-mono font-bold uppercase">{webSearchEnabled ? 'On' : 'Off'}</span>
                 </button>
@@ -462,11 +462,11 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs transition-all ${
                     mapsResearchEnabled
                       ? 'bg-rose-500/15 border-rose-400/40 text-rose-300 shadow-[0_0_15px_rgba(244,63,94,0.15)]'
-                      : 'bg-white/[0.03] border-white/[0.08] text-zinc-400 hover:text-zinc-200'
+                      : 'bg-white/[0.03] border-white/[0.08] text-[#A0A0A0] hover:text-[#FFFFFF]'
                   }`}
                   title={mapsResearchEnabled ? "Google Maps Business Research is active" : "Enable Google Maps Business Research"}
                 >
-                  <MapPin className={`w-3.5 h-3.5 ${mapsResearchEnabled ? 'text-rose-400' : 'text-zinc-500'}`} />
+                  <MapPin className={`w-3.5 h-3.5 ${mapsResearchEnabled ? 'text-rose-400' : 'text-[#A0A0A0]'}`} />
                   <span className="hidden md:inline">Maps Research</span>
                   <span className="text-[10px] font-mono font-bold uppercase">{mapsResearchEnabled ? 'On' : 'Off'}</span>
                 </button>
@@ -478,7 +478,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                 <button
                   type="button"
                   onClick={() => setIsRecordingVoice(true)}
-                  className="p-2 sm:p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-zinc-400 hover:text-sky-300 border border-white/[0.08] transition-colors"
+                  className="p-2 sm:p-2.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-[#A0A0A0] hover:text-sky-300 border border-white/[0.08] transition-colors"
                   title="Record voice note"
                   aria-label="Record voice note"
                 >
@@ -492,7 +492,7 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
                   disabled={(!inputText.trim() && pendingAttachments.length === 0) || isLoading}
                   className={`p-2 sm:p-2.5 rounded-xl flex items-center justify-center transition-all ${
                     (inputText.trim() || pendingAttachments.length > 0) && !isLoading
-                      ? 'bg-sky-500 hover:bg-sky-400 text-zinc-950 shadow-[0_0_20px_rgba(56,189,248,0.4)] scale-100 active:scale-95 font-bold'
+                      ? 'bg-[#A3FF12] hover:bg-sky-400 text-zinc-950 shadow-[0_0_20px_rgba(56,189,248,0.4)] scale-100 active:scale-95 font-bold'
                       : 'bg-white/[0.05] text-zinc-600 cursor-not-allowed border border-white/[0.05]'
                   }`}
                   title="Send message"
@@ -508,9 +508,9 @@ export const ChatArea: React.FC<ChatAreaProps> = ({
             </div>
           </div>
 
-          <div className="flex items-center justify-between text-[11px] text-zinc-500 px-3">
-            <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-zinc-400 font-mono text-[10px]">Enter</kbd> to send, <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-zinc-400 font-mono text-[10px]">Shift+Enter</kbd> for new line</span>
-            <span className="hidden sm:inline">Multimodal • Gemini 3.8 Flash</span>
+          <div className="flex items-center justify-between text-[11px] text-[#A0A0A0] px-3">
+            <span>Press <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-[#A0A0A0] font-mono text-[10px]">Enter</kbd> to send, <kbd className="px-1.5 py-0.5 rounded bg-white/[0.06] border border-white/[0.08] text-[#A0A0A0] font-mono text-[10px]">Shift+Enter</kbd> for new line</span>
+            <span className="hidden sm:inline">Multimodal • </span>
           </div>
         </div>
       </div>

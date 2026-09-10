@@ -57,7 +57,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
   return (
     <div
       className={`py-5 px-4 sm:px-6 transition-colors ${
-        isAssistant ? 'bg-zinc-950/40' : 'bg-transparent'
+        isAssistant ? 'bg-[#0F0F0F]/40' : 'bg-transparent'
       }`}
     >
       <div className="max-w-5xl mx-auto flex gap-4 sm:gap-5 items-start">
@@ -66,7 +66,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
           className={`w-8 h-8 rounded-xl shrink-0 flex items-center justify-center font-bold text-xs shadow-md ${
             isAssistant
               ? 'bg-gradient-to-tr from-emerald-600 via-teal-500 to-emerald-400 text-zinc-950'
-              : 'bg-zinc-800 border border-zinc-700 text-zinc-300'
+              : 'bg-[#1A1A1A] border border-[#2D2D2D] text-[#A0A0A0]'
           }`}
         >
           {isAssistant ? <Bot className="w-4 h-4" /> : <User className="w-4 h-4" />}
@@ -77,7 +77,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
           {/* Header */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold text-zinc-200">
+              <span className="text-xs font-bold text-[#FFFFFF]">
                 {isAssistant ? 'CloudConnect AI' : 'You'}
               </span>
               {isAssistant && (
@@ -87,7 +87,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
               )}
             </div>
 
-            <span className="text-[10px] text-zinc-500 font-mono">
+            <span className="text-[10px] text-[#A0A0A0] font-mono">
               {new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
             </span>
           </div>
@@ -109,8 +109,8 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
           {/* Generated Image Card */}
           {message.generatedImage && (
-            <div className="my-3 rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900/90 shadow-lg max-w-xl">
-              <div className="relative group overflow-hidden bg-zinc-950 flex items-center justify-center">
+            <div className="my-3 rounded-2xl overflow-hidden border border-[#2D2D2D] bg-[#1A1A1A]/90 shadow-lg max-w-xl">
+              <div className="relative group overflow-hidden bg-[#0F0F0F] flex items-center justify-center">
                 <img
                   src={message.generatedImage.url}
                   alt={message.generatedImage.prompt}
@@ -119,12 +119,12 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                 />
               </div>
 
-              <div className="p-3 bg-zinc-950/80 border-t border-zinc-800/80 flex items-center justify-between gap-2">
+              <div className="p-3 bg-[#0F0F0F]/80 border-t border-[#2D2D2D]/80 flex items-center justify-between gap-2">
                 <div className="min-w-0 flex-1">
-                  <div className="text-[11px] font-medium text-zinc-300 truncate" title={message.generatedImage.prompt}>
+                  <div className="text-[11px] font-medium text-[#A0A0A0] truncate" title={message.generatedImage.prompt}>
                     "{message.generatedImage.prompt}"
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] font-mono text-zinc-500 mt-0.5">
+                  <div className="flex items-center gap-2 text-[10px] font-mono text-[#A0A0A0] mt-0.5">
                     <span className="text-emerald-400 font-semibold">AI Generated Image</span>
                     {message.generatedImage.aspectRatio && (
                       <span>• Ratio: {message.generatedImage.aspectRatio}</span>
@@ -136,7 +136,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                   <a
                     href={message.generatedImage.url}
                     download={`ai-image-${Date.now()}.png`}
-                    className="p-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 hover:text-emerald-400 transition-colors"
+                    className="p-1.5 rounded-lg bg-[#1A1A1A] hover:bg-[#2D2D2D] text-[#A0A0A0] hover:text-emerald-400 transition-colors"
                     title="Download full resolution"
                   >
                     <Download className="w-3.5 h-3.5" />
@@ -148,7 +148,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
           {/* Text Message Content */}
           {message.content && (
-            <div className="prose prose-invert max-w-none text-sm text-zinc-200 leading-relaxed font-sans">
+            <div className="prose prose-invert max-w-none text-sm text-[#FFFFFF] leading-relaxed font-sans">
               <ReactMarkdown
                 components={{
                   code({ node, inline, className, children, ...props }: any) {
@@ -158,12 +158,12 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                     if (!inline && match) {
                       const lang = match[1];
                       return (
-                        <div className="relative my-3 rounded-xl overflow-hidden border border-zinc-800 bg-zinc-950">
-                          <div className="flex items-center justify-between px-3 py-1.5 bg-zinc-900/90 border-b border-zinc-800 text-[11px] font-mono text-zinc-400">
+                        <div className="relative my-3 rounded-xl overflow-hidden border border-[#2D2D2D] bg-[#0F0F0F]">
+                          <div className="flex items-center justify-between px-3 py-1.5 bg-[#1A1A1A]/90 border-b border-[#2D2D2D] text-[11px] font-mono text-[#A0A0A0]">
                             <span>{lang}</span>
                             <button
                               onClick={() => handleCopyCodeBlock(codeString, 1)}
-                              className="flex items-center gap-1 hover:text-zinc-200 transition-colors"
+                              className="flex items-center gap-1 hover:text-[#FFFFFF] transition-colors"
                             >
                               {codeCopiedIndex === 1 ? (
                                 <Check className="w-3 h-3 text-emerald-400" />
@@ -183,25 +183,25 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                     }
 
                     return (
-                      <code className="bg-zinc-800/80 px-1.5 py-0.5 rounded text-emerald-400 font-mono text-xs" {...props}>
+                      <code className="bg-[#1A1A1A]/80 px-1.5 py-0.5 rounded text-emerald-400 font-mono text-xs" {...props}>
                         {children}
                       </code>
                     );
                   },
                   table({ children }: any) {
                     return (
-                      <div className="overflow-x-auto my-3 border border-zinc-800 rounded-xl">
-                        <table className="w-full text-xs text-left text-zinc-300 divide-y divide-zinc-800">
+                      <div className="overflow-x-auto my-3 border border-[#2D2D2D] rounded-xl">
+                        <table className="w-full text-xs text-left text-[#A0A0A0] divide-y divide-zinc-800">
                           {children}
                         </table>
                       </div>
                     );
                   },
                   th({ children }: any) {
-                    return <th className="px-3 py-2 bg-zinc-900 font-semibold text-zinc-200">{children}</th>;
+                    return <th className="px-3 py-2 bg-[#1A1A1A] font-semibold text-[#FFFFFF]">{children}</th>;
                   },
                   td({ children }: any) {
-                    return <td className="px-3 py-2 border-t border-zinc-800/60">{children}</td>;
+                    return <td className="px-3 py-2 border-t border-[#2D2D2D]/60">{children}</td>;
                   },
                   ul({ children }: any) {
                     return <ul className="list-disc pl-5 my-2 space-y-1">{children}</ul>;
@@ -245,7 +245,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
           {/* Assistant Action Bar */}
           {isAssistant && (
-            <div className="pt-2 flex items-center gap-2 text-zinc-500 text-xs">
+            <div className="pt-2 flex items-center gap-2 text-[#A0A0A0] text-xs">
               <button
                 onClick={
                   isCurrentlySpeaking
@@ -255,7 +255,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
                 className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border transition-all ${
                   isCurrentlySpeaking
                     ? 'bg-emerald-950/80 border-emerald-500/50 text-emerald-400 font-medium'
-                    : 'bg-zinc-900/60 border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800'
+                    : 'bg-[#1A1A1A]/60 border-[#2D2D2D] hover:text-[#FFFFFF] hover:bg-[#1A1A1A]'
                 }`}
                 title={isCurrentlySpeaking ? 'Stop speaking' : 'Read answer aloud with AI Voice'}
               >
@@ -274,7 +274,7 @@ export const MessageItem: React.FC<MessageItemProps> = ({
 
               <button
                 onClick={handleCopyText}
-                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-zinc-900/60 border border-zinc-800 hover:text-zinc-200 hover:bg-zinc-800 transition-colors"
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#1A1A1A]/60 border border-[#2D2D2D] hover:text-[#FFFFFF] hover:bg-[#1A1A1A] transition-colors"
                 title="Copy response to clipboard"
               >
                 {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
