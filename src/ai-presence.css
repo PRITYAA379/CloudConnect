@@ -1,100 +1,35 @@
 :root {
-  --cc-bg: #0F0F0F;
-  --cc-surface: #1A1A1A;
+  --cc-bg: #02050c;
+  --cc-surface: #0a0f19;
   --cc-accent: #A3FF12;
   --cc-text: #FFFFFF;
   --cc-muted: #A0A0A0;
-  --cc-border: #2D2D2D;
+  --cc-border: #243044;
 }
 
+html, body, #root { min-height: 100%; }
+body {
+  background: radial-gradient(circle at 52% 38%, rgba(163,255,18,0.055), transparent 24%), radial-gradient(circle at 78% 22%, rgba(50,120,255,0.08), transparent 25%), #02050c;
+}
+body::before {
+  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .42;
+  background: linear-gradient(rgba(163,255,18,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(163,255,18,.035) 1px, transparent 1px), radial-gradient(circle at 50% 42%, rgba(163,255,18,.10), transparent 30%);
+  background-size: 42px 42px, 42px 42px, 100% 100%;
+  transform: perspective(900px) rotateX(62deg) scale(1.55) translateY(25%); transform-origin: center bottom;
+  animation: cloudconnect-grid-drift 18s linear infinite; mask-image: linear-gradient(to bottom, transparent, black 22%, black 75%, transparent);
+}
 body::after {
-  content: "";
-  position: fixed;
-  top: 18px;
-  right: 22px;
-  width: 10px;
-  height: 10px;
-  border-radius: 9999px;
-  background: #A3FF12;
-  box-shadow:
-    0 0 0 4px rgba(163,255,18,0.08),
-    0 0 22px rgba(163,255,18,0.35);
-  z-index: 9999;
-  pointer-events: none;
-  opacity: 0.7;
-  transform: scale(1);
-  transition:
-    opacity 300ms ease,
-    transform 300ms ease,
-    box-shadow 300ms ease;
+  content: ""; position: fixed; top: 18px; right: 22px; width: 10px; height: 10px; border-radius: 9999px;
+  background: #A3FF12; box-shadow: 0 0 0 4px rgba(163,255,18,.08), 0 0 22px rgba(163,255,18,.35);
+  z-index: 9999; pointer-events: none; opacity: .7; transform: scale(1); transition: opacity 300ms ease, transform 300ms ease, box-shadow 300ms ease;
   animation: cloudconnect-presence-breathe 2.4s ease-in-out infinite;
 }
-
-[data-cloudconnect-state="thinking"] body::after {
-  opacity: 1;
-  transform: scale(1.15);
-  box-shadow:
-    0 0 0 5px rgba(163,255,18,0.10),
-    0 0 30px rgba(163,255,18,0.45);
-}
-
-[data-cloudconnect-state="voice"] body::after {
-  opacity: 1;
-  transform: scale(1.3);
-  box-shadow:
-    0 0 0 7px rgba(163,255,18,0.12),
-    0 0 42px rgba(163,255,18,0.65);
-  animation-duration: 1s;
-}
-
-[data-cloudconnect-state="coding"] body::after {
-  opacity: 1;
-  transform: scale(1.08);
-  box-shadow:
-    0 0 0 5px rgba(163,255,18,0.09),
-    0 0 28px rgba(163,255,18,0.40);
-}
-
-[data-cloudconnect-state="error"] body::after {
-  background: #ff5050;
-  opacity: 1;
-  box-shadow:
-    0 0 0 5px rgba(255,80,80,0.10),
-    0 0 30px rgba(255,80,80,0.45);
-  animation: cloudconnect-presence-error 700ms ease-in-out 2;
-}
-
-@keyframes cloudconnect-presence-breathe {
-  0%, 100% {
-    opacity: 0.55;
-    transform: scale(0.95);
-  }
-
-  50% {
-    opacity: 1;
-    transform: scale(1.08);
-  }
-}
-
-@keyframes cloudconnect-presence-error {
-  0%, 100% {
-    transform: scale(1);
-  }
-
-  50% {
-    transform: scale(1.35);
-  }
-}
-
-@media (max-width: 640px) {
-  body::after {
-    top: 12px;
-    right: 14px;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  body::after {
-    animation: none !important;
-  }
-}
+[data-cloudconnect-state="thinking"] body::after { opacity: 1; transform: scale(1.15); box-shadow: 0 0 0 5px rgba(163,255,18,.10), 0 0 30px rgba(163,255,18,.45); }
+[data-cloudconnect-state="voice"] body::after { opacity: 1; transform: scale(1.3); box-shadow: 0 0 0 7px rgba(163,255,18,.12), 0 0 42px rgba(163,255,18,.65); animation-duration: 1s; }
+[data-cloudconnect-state="coding"] body::after { opacity: 1; transform: scale(1.08); box-shadow: 0 0 0 5px rgba(163,255,18,.09), 0 0 28px rgba(163,255,18,.40); }
+[data-cloudconnect-state="error"] body::after { background: #ff5050; opacity: 1; box-shadow: 0 0 0 5px rgba(255,80,80,.10), 0 0 30px rgba(255,80,80,.45); animation: cloudconnect-presence-error 700ms ease-in-out 2; }
+@keyframes cloudconnect-grid-drift { from { background-position: 0 0, 0 0, center; } to { background-position: 0 42px, 42px 0, center; } }
+@keyframes cloudconnect-presence-breathe { 0%,100% { opacity:.55; transform:scale(.95); } 50% { opacity:1; transform:scale(1.08); } }
+@keyframes cloudconnect-presence-error { 0%,100% { transform:scale(1); } 50% { transform:scale(1.35); } }
+@media (max-width:640px) { body::after { top:12px; right:14px; } body::before { opacity:.25; transform:perspective(700px) rotateX(62deg) scale(1.8) translateY(25%); } }
+@media (prefers-reduced-motion:reduce) { body::before, body::after { animation:none !important; } }
