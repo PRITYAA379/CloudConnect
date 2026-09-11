@@ -8,28 +8,36 @@
 }
 
 html, body, #root { min-height: 100%; }
-body {
-  background: radial-gradient(circle at 52% 38%, rgba(163,255,18,0.055), transparent 24%), radial-gradient(circle at 78% 22%, rgba(50,120,255,0.08), transparent 25%), #02050c;
-}
-body::before {
-  content: ""; position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: .42;
-  background: linear-gradient(rgba(163,255,18,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(163,255,18,.035) 1px, transparent 1px), radial-gradient(circle at 50% 42%, rgba(163,255,18,.10), transparent 30%);
-  background-size: 42px 42px, 42px 42px, 100% 100%;
-  transform: perspective(900px) rotateX(62deg) scale(1.55) translateY(25%); transform-origin: center bottom;
-  animation: cloudconnect-grid-drift 18s linear infinite; mask-image: linear-gradient(to bottom, transparent, black 22%, black 75%, transparent);
-}
-body::after {
-  content: ""; position: fixed; top: 18px; right: 22px; width: 10px; height: 10px; border-radius: 9999px;
-  background: #A3FF12; box-shadow: 0 0 0 4px rgba(163,255,18,.08), 0 0 22px rgba(163,255,18,.35);
-  z-index: 9999; pointer-events: none; opacity: .7; transform: scale(1); transition: opacity 300ms ease, transform 300ms ease, box-shadow 300ms ease;
-  animation: cloudconnect-presence-breathe 2.4s ease-in-out infinite;
-}
-[data-cloudconnect-state="thinking"] body::after { opacity: 1; transform: scale(1.15); box-shadow: 0 0 0 5px rgba(163,255,18,.10), 0 0 30px rgba(163,255,18,.45); }
-[data-cloudconnect-state="voice"] body::after { opacity: 1; transform: scale(1.3); box-shadow: 0 0 0 7px rgba(163,255,18,.12), 0 0 42px rgba(163,255,18,.65); animation-duration: 1s; }
-[data-cloudconnect-state="coding"] body::after { opacity: 1; transform: scale(1.08); box-shadow: 0 0 0 5px rgba(163,255,18,.09), 0 0 28px rgba(163,255,18,.40); }
-[data-cloudconnect-state="error"] body::after { background: #ff5050; opacity: 1; box-shadow: 0 0 0 5px rgba(255,80,80,.10), 0 0 30px rgba(255,80,80,.45); animation: cloudconnect-presence-error 700ms ease-in-out 2; }
-@keyframes cloudconnect-grid-drift { from { background-position: 0 0, 0 0, center; } to { background-position: 0 42px, 42px 0, center; } }
-@keyframes cloudconnect-presence-breathe { 0%,100% { opacity:.55; transform:scale(.95); } 50% { opacity:1; transform:scale(1.08); } }
-@keyframes cloudconnect-presence-error { 0%,100% { transform:scale(1); } 50% { transform:scale(1.35); } }
-@media (max-width:640px) { body::after { top:12px; right:14px; } body::before { opacity:.25; transform:perspective(700px) rotateX(62deg) scale(1.8) translateY(25%); } }
-@media (prefers-reduced-motion:reduce) { body::before, body::after { animation:none !important; } }
+body { background: radial-gradient(circle at 52% 38%, rgba(163,255,18,.055), transparent 24%), radial-gradient(circle at 78% 22%, rgba(50,120,255,.08), transparent 25%), #02050c; }
+body::before { content:""; position:fixed; inset:0; z-index:0; pointer-events:none; opacity:.42; background:linear-gradient(rgba(163,255,18,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(163,255,18,.035) 1px,transparent 1px),radial-gradient(circle at 50% 42%,rgba(163,255,18,.10),transparent 30%); background-size:42px 42px,42px 42px,100% 100%; transform:perspective(900px) rotateX(62deg) scale(1.55) translateY(25%); transform-origin:center bottom; animation:cloudconnect-grid-drift 18s linear infinite; mask-image:linear-gradient(to bottom,transparent,black 22%,black 75%,transparent); }
+body::after { content:""; position:fixed; top:18px; right:22px; width:10px; height:10px; border-radius:9999px; background:#A3FF12; box-shadow:0 0 0 4px rgba(163,255,18,.08),0 0 22px rgba(163,255,18,.35); z-index:9999; pointer-events:none; opacity:.7; transform:scale(1); transition:opacity 300ms ease,transform 300ms ease,box-shadow 300ms ease; animation:cloudconnect-presence-breathe 2.4s ease-in-out infinite; }
+[data-cloudconnect-state="thinking"] body::after { opacity:1; transform:scale(1.15); box-shadow:0 0 0 5px rgba(163,255,18,.10),0 0 30px rgba(163,255,18,.45); }
+[data-cloudconnect-state="voice"] body::after { opacity:1; transform:scale(1.3); box-shadow:0 0 0 7px rgba(163,255,18,.12),0 0 42px rgba(163,255,18,.65); animation-duration:1s; }
+[data-cloudconnect-state="coding"] body::after { opacity:1; transform:scale(1.08); box-shadow:0 0 0 5px rgba(163,255,18,.09),0 0 28px rgba(163,255,18,.40); }
+[data-cloudconnect-state="error"] body::after { background:#ff5050; opacity:1; box-shadow:0 0 0 5px rgba(255,80,80,.10),0 0 30px rgba(255,80,80,.45); animation:cloudconnect-presence-error 700ms ease-in-out 2; }
+
+/* CloudConnect 3D AI Core */
+.cc3d-stage { position:relative; width:min(620px,78vw); height:min(620px,58vh); min-height:390px; margin:auto; display:grid; place-items:center; perspective:1000px; isolation:isolate; overflow:hidden; border-radius:32px; background:radial-gradient(circle at center,rgba(163,255,18,.055),transparent 42%); }
+.cc3d-grid { position:absolute; inset:0; background:linear-gradient(rgba(163,255,18,.045) 1px,transparent 1px),linear-gradient(90deg,rgba(163,255,18,.045) 1px,transparent 1px); background-size:28px 28px; transform:perspective(700px) rotateX(68deg) scale(1.5); transform-origin:center bottom; mask-image:linear-gradient(transparent,black 35%,transparent); opacity:.6; }
+.cc3d-core { position:relative; width:170px; height:170px; border-radius:50%; transform-style:preserve-3d; background:radial-gradient(circle at 35% 30%,#fff 0 2%,#d9ff9a 5%,#A3FF12 16%,rgba(163,255,18,.22) 42%,transparent 70%); box-shadow:0 0 25px rgba(163,255,18,.55),0 0 90px rgba(163,255,18,.22),inset 0 0 35px rgba(255,255,255,.28); animation:cc3d-float 4s ease-in-out infinite; z-index:4; }
+.cc3d-core::before,.cc3d-core::after { content:""; position:absolute; inset:-22px; border:1px solid rgba(163,255,18,.42); border-radius:50%; transform:rotateX(68deg) rotateZ(12deg); box-shadow:0 0 25px rgba(163,255,18,.18); animation:cc3d-spin 7s linear infinite; }
+.cc3d-core::after { inset:-38px; transform:rotateY(68deg) rotateZ(-18deg); animation-duration:11s; border-color:rgba(255,255,255,.18); }
+.cc3d-core-inner { position:absolute; inset:28px; display:grid; place-items:center; border-radius:50%; background:rgba(2,5,12,.32); border:1px solid rgba(255,255,255,.25); backdrop-filter:blur(3px); color:#fff; font:700 28px/1 system-ui,sans-serif; letter-spacing:.16em; text-shadow:0 0 20px rgba(163,255,18,.9); }
+.cc3d-orbit { position:absolute; width:340px; height:110px; border:1px solid rgba(163,255,18,.28); border-radius:50%; z-index:2; pointer-events:none; }
+.cc3d-orbit-a { transform:rotateX(72deg) rotateZ(8deg); animation:cc3d-spin 9s linear infinite; }
+.cc3d-orbit-b { width:410px; height:150px; transform:rotateY(68deg) rotateZ(-12deg); animation:cc3d-spin-reverse 13s linear infinite; }
+.cc3d-orbit-c { width:280px; height:280px; border-color:rgba(255,255,255,.13); transform:rotateX(72deg) rotateZ(45deg); animation:cc3d-spin 16s linear infinite; }
+.cc3d-node { position:absolute; width:7px; height:7px; border-radius:50%; background:#A3FF12; box-shadow:0 0 14px #A3FF12; z-index:5; animation:cc3d-node-pulse 2s ease-in-out infinite; }
+.cc3d-node-1 { top:27%; left:31%; }.cc3d-node-2 { top:32%; right:27%; animation-delay:.4s; }.cc3d-node-3 { bottom:28%; left:27%; animation-delay:.8s; }.cc3d-node-4 { bottom:24%; right:30%; animation-delay:1.2s; }
+.cc3d-status { position:absolute; bottom:16%; z-index:6; font:700 12px/1 system-ui,sans-serif; letter-spacing:.28em; color:#A3FF12; text-shadow:0 0 16px rgba(163,255,18,.65); }
+.cc3d-caption { position:absolute; bottom:10%; z-index:6; color:rgba(255,255,255,.42); font:500 9px/1 system-ui,sans-serif; letter-spacing:.25em; }
+.cc3d-thinking .cc3d-core { animation-duration:1.4s; }.cc3d-thinking .cc3d-orbit { animation-duration:3s; }.cc3d-voice .cc3d-core { transform:scale(1.12); box-shadow:0 0 35px rgba(163,255,18,.7),0 0 120px rgba(163,255,18,.3); }.cc3d-coding .cc3d-core { border-radius:24%; }.cc3d-error .cc3d-core { filter:hue-rotate(115deg); }
+@keyframes cc3d-float { 0%,100%{transform:translateY(0) rotateY(0deg)} 50%{transform:translateY(-10px) rotateY(8deg)} }
+@keyframes cc3d-spin { to{transform:rotateX(68deg) rotateZ(368deg)} }
+@keyframes cc3d-spin-reverse { to{transform:rotateY(68deg) rotateZ(-372deg)} }
+@keyframes cc3d-node-pulse { 0%,100%{transform:scale(.65);opacity:.45} 50%{transform:scale(1.7);opacity:1} }
+@keyframes cloudconnect-grid-drift { from{background-position:0 0,0 0,center} to{background-position:0 42px,42px 0,center} }
+@keyframes cloudconnect-presence-breathe { 0%,100%{opacity:.55;transform:scale(.95)} 50%{opacity:1;transform:scale(1.08)} }
+@keyframes cloudconnect-presence-error { 0%,100%{transform:scale(1)} 50%{transform:scale(1.35)} }
+@media (max-width:640px){ body::after{top:12px;right:14px}.cc3d-stage{width:96vw;height:48vh;min-height:330px}.cc3d-core{width:130px;height:130px}.cc3d-orbit-a{width:270px}.cc3d-orbit-b{width:320px}body::before{opacity:.25;transform:perspective(700px) rotateX(62deg) scale(1.8) translateY(25%)} }
+@media (prefers-reduced-motion:reduce){body::before,body::after,.cc3d-core,.cc3d-orbit,.cc3d-node{animation:none!important}}
