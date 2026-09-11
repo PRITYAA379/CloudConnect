@@ -2,11 +2,11 @@
 
 ## Current Phase
 
-- In progress — Six-File Context System established.
+- In progress — Six-File Context System established and first runtime memory feature implemented.
 
 ## Current Goal
 
-- Make CloudConnect maintainable for AI-assisted development by giving coding agents a persistent, explicit project context and a repeatable implementation workflow.
+- Give CloudConnect both explicit developer context and coherent multi-turn user conversation memory without replacing the existing AI provider or chat flow.
 
 ## Completed
 
@@ -16,17 +16,20 @@
 - Added `context/code-standards.md` with implementation conventions.
 - Added `context/ai-workflow-rules.md` with scoped, spec-driven development rules.
 - Added `context/ui-context.md` with the existing UI language and component conventions.
+- Added `server-memory.ts` as a bounded runtime conversation-memory layer.
+- Runtime memory keeps recent turns verbatim and compacts older turns into a bounded semantic summary.
+- Activated the memory runtime for development and production builds through `package.json` entrypoint changes.
 
 ## In Progress
 
-- Establish the first feature unit using the new context system.
-- Verify the repository after the context-only change.
+- Verify the new runtime with `npm run lint` and `npm run build` locally.
+- Validate conversation continuity across more than six turns.
 
 ## Next Up
 
-- Run `npm run lint` and `npm run build` locally.
-- For the next product feature, define a small spec/acceptance criteria before editing implementation code.
-- Improve conversational context/memory separately from developer context; do not conflate the Six-File developer methodology with runtime user memory.
+- Add explicit client `sessionId` propagation so server memory is perfectly isolated between separate chats.
+- Replace process-local memory with a persistent store when production persistence is required.
+- Add automated tests for memory trimming, duplicate reconciliation, and session isolation.
 
 ## Open Questions
 
@@ -38,11 +41,13 @@
 ## Architecture Decisions
 
 - The Six-File Context System lives under root `context/` and is consumed by AI coding agents; it is not injected into end-user prompts by default.
-- `CLAUDE.md` is the entry point and requires the six context files to be read in a fixed order.
-- Existing CloudConnect runtime architecture remains unchanged by this documentation-only implementation.
+- Runtime conversation memory is deliberately separate from developer context.
+- `server-memory.ts` wraps the existing `/api/chat` route rather than rewriting the existing AI orchestration, preserving current provider, grounding, attachment, voice, and fallback behavior.
+- Current runtime memory is process-local, matching CloudConnect's existing in-memory server model. It is not presented as production-grade persistence.
 
 ## Session Notes
 
 - Current repository uses React + TypeScript + Vite on the client and Express/Node on the server.
 - `src/App.tsx` already sends conversation history to `/api/chat` and uses `src/utils/workspaceContext.ts` for workspace state.
-- This methodology layer should make future code changes smaller, more consistent, and resumable across AI coding sessions.
+- The existing server only sends the last six history messages to Gemini; the new runtime memory layer expands usable continuity by retaining recent turns and a bounded summary of older context.
+- Local repository execution could not be run from this environment because outbound GitHub/network access from the execution container is unavailable.
